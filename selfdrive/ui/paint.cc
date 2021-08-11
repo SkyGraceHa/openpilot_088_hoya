@@ -127,7 +127,7 @@ static float lock_on_rotation[] = {0.f, 0.1f*NVG_PI, 0.3f*NVG_PI, 0.6f*NVG_PI, 1
 
 static float lock_on_scale[] = {1.f, 1.05f, 1.1f, 1.15f, 1.2f, 1.15f, 1.1f, 1.05f, 1.f, 0.95f, 0.9f, 0.85f, 0.8f, 0.85f, 0.9f, 0.95f};
 
-static void draw_lead_custom(UIState *s, const cereal::RadarState::LeadData::Reader &lead_data, const vertex_data &vd) {
+static void draw_lead_custom(UIState *s, const cereal::ModelDataV2::LeadDataV2::Reader &lead_data, const vertex_data &vd) {
     auto [x, y] = vd;
     float d_rel = lead_data.getXyva()[0];
     auto intrinsic_matrix = s->wide_camera ? ecam_intrinsic_matrix : fcam_intrinsic_matrix;
