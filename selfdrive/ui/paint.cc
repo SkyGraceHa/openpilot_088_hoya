@@ -143,7 +143,7 @@ static void draw_lead_custom(UIState *s, const cereal::ModelDataV2::LeadDataV2::
     y = std::fmin(s->fb_h - sz * .6, y);
     y = std::fmin(s->fb_h * 0.8f, y);
     float img_alpha = 1.0f;
-    const char* image = lead_data.getRadar() ? "custom_lead_radar" : "custom_lead_vision";
+    const char* image = (s->scene.radarDistance < 149) ? "custom_lead_radar" : "custom_lead_vision";
     if(s->sm->frame % 2 == 0) {
         s->lock_on_anim_index++;
     }
@@ -153,7 +153,7 @@ static void draw_lead_custom(UIState *s, const cereal::ModelDataV2::LeadDataV2::
     }
     nvgSave(s->vg);
     nvgTranslate(s->vg, x, y);
-    if (lead_data.getRadar()) { //레이더 인식상태면 회전
+    if (s->scene.radarDistance < 149) { //레이더 인식상태면 회전
       nvgRotate(s->vg, lock_on_rotation[s->lock_on_anim_index % 9]);
     }
     else { //카메라 인식 상태면 줌인아웃
