@@ -226,6 +226,8 @@ struct CarState {
   safetyDist @49 :Float32;
   safetySign @50 :Float32;
 
+  autoHold @51 : Int32;
+
   struct WheelSpeeds {
     # optional wheel speeds
     fl @0 :Float32;

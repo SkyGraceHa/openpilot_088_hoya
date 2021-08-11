@@ -173,6 +173,7 @@ class CarController():
     self.cruise_gap_prev = 0
     self.cruise_gap_set_init = 0
     self.cruise_gap_switch_timer = 0
+    self.cruise_gap_auto_switch_timer = 0
     self.standstill_fault_reduce_timer = 0
     self.cruise_gap_prev2 = 0
     self.cruise_gap_switch_timer2 = 0
@@ -403,6 +404,42 @@ class CarController():
     if pcm_cancel_cmd and self.longcontrol:
       can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.CANCEL, clu11_speed, CS.CP.sccBus))
 
+    # 차간거리를 주행속도에 맞춰 변환하기
+    if CS.acc_active and not CS.out.gasPressed and not CS.out.brakePressed:
+      if (CS.out.vEgo * CV.MS_TO_KPH) >= 75: # 시속 75킬로 이상 GAP_DIST 4칸 유지
+        self.cruise_gap_auto_switch_timer += 1
+        if self.cruise_gap_auto_switch_timer > 25 and (CS.cruiseGapSet != 4.0) :
+          can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+            else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
+          self.cruise_gap_auto_switch_timer = 0
+        if CS.cruiseGapSet == 4.0:
+          self.cruise_gap_auto_switch_timer = 0
+      elif (CS.out.vEgo * CV.MS_TO_KPH) >= 55 :# 시속 55킬로 이상 GAP_DIST 3칸 만들기
+        self.cruise_gap_auto_switch_timer += 1
+        if self.cruise_gap_auto_switch_timer > 25 and (CS.cruiseGapSet != 3.0) :
+          can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+            else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
+          self.cruise_gap_auto_switch_timer = 0
+        if CS.cruiseGapSet == 3.0:
+          self.cruise_gap_auto_switch_timer = 0          
+      elif (CS.out.vEgo * CV.MS_TO_KPH) >= 30 :# 시속 30킬로 이상 GAP_DIST 2칸 만들기
+        self.cruise_gap_auto_switch_timer += 1
+        if self.cruise_gap_auto_switch_timer > 25 and (CS.cruiseGapSet != 2.0) :
+          can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+            else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
+          self.cruise_gap_auto_switch_timer = 0
+        if CS.cruiseGapSet == 2.0:
+          self.cruise_gap_auto_switch_timer = 0          
+      elif (CS.out.vEgo * CV.MS_TO_KPH) < 10 : # 시속 20킬로 미만 GAP_DIST 1칸 만들기
+        self.cruise_gap_auto_switch_timer += 1
+        if self.cruise_gap_auto_switch_timer > 25 and CS.cruiseGapSet != 1.0 :
+          can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+            else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
+          self.cruise_gap_auto_switch_timer = 0
+        if CS.cruiseGapSet == 1.0:
+          self.cruise_gap_auto_switch_timer = 0
+      else:
+        pass
     if CS.out.cruiseState.standstill:
       self.standstill_status = 1
       if self.opkr_autoresume:
@@ -476,17 +513,17 @@ class CarController():
     opkr_cruise_auto_res_condition = False
     opkr_cruise_auto_res_condition = not self.opkr_cruise_auto_res_condition or CS.out.gasPressed
     if self.model_speed > 95 and self.cancel_counter == 0 and not CS.acc_active and not CS.out.brakeLights and int(CS.VSetDis) > 30 and \
-     (CS.lead_distance < 149 or int(CS.clu_Vanz) > 30) and int(CS.clu_Vanz) >= 3 and self.auto_res_timer <= 0 and self.opkr_cruise_auto_res and opkr_cruise_auto_res_condition:
+     (20 < CS.lead_distance < 149 or int(CS.clu_Vanz) > 30) and int(CS.clu_Vanz) >= 3 and self.auto_res_timer <= 0 and self.opkr_cruise_auto_res and opkr_cruise_auto_res_condition:
       if self.opkr_cruise_auto_res_option == 0:
         can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL)) if not self.longcontrol \
          else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.RES_ACCEL, clu11_speed, CS.CP.sccBus))  # auto res
         self.res_speed = int(CS.clu_Vanz*1.1)
-        self.res_speed_timer = 350
+        self.res_speed_timer = 50
       elif self.opkr_cruise_auto_res_option == 1:
         can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.SET_DECEL)) if not self.longcontrol \
          else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.SET_DECEL, clu11_speed, CS.CP.sccBus)) # auto res but set_decel to set current speed
         self.v_cruise_kph_auto_res = int(CS.clu_Vanz)
-        self.res_speed_timer = 50
+        self.res_speed_timer = 30
       if self.auto_res_timer <= 0:
         self.auto_res_timer = randint(10, 15)
     elif self.auto_res_timer > 0 and self.opkr_cruise_auto_res:

@@ -111,9 +111,9 @@ class Spdctrl(SpdController):
         else:
             d_delta2 = 0
  
-        if CS.driverAcc_time and not self.map_decel_only: #운전자가 가속페달 밟으면 크루즈 설정속도를 현재속도+1로 동기화
-            if int(CS.VSetDis) < int(round(CS.clu_Vanz)) + 1:
-              lead_set_speed = int(round(CS.clu_Vanz)) + 1
+        if CS.driverAcc_time and not self.map_decel_only: #운전자가 가속페달 밟으면 크루즈 설정속도를 현재속도+3로 동기화
+            if int(CS.VSetDis) < int(round(CS.clu_Vanz)) + 3:
+              lead_set_speed = int(round(CS.clu_Vanz)) + 3
               self.seq_step_debug = "운전자가속"
               lead_wait_cmd = 10
         elif int(round(self.target_speed)) < int(CS.VSetDis) and self.map_enable and ((int(round(self.target_speed)) < int(round(self.cruise_set_speed_kph))) and self.target_speed != 0):
@@ -171,11 +171,14 @@ class Spdctrl(SpdController):
         elif 20 <= dRel < 149 and lead_objspd < -20 and not self.map_decel_only: #정지 차량 및 급감속 차량 발견 시
             self.cut_in = False
             if dRel >= 50:
-                self.seq_step_debug = "정차차량 감속"
-                lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, 8, -10)
+                self.seq_step_debug = "정차차량 감속-20"
+                lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS,  10, -20)
+            elif dRel >= 40:
+                self.seq_step_debug = "정차차량 감속-15"
+                lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, 10, -15)
             elif dRel >= 30:
-                self.seq_step_debug = "정차차량 감속"
-                lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, 20, -10)
+                self.seq_step_debug = "정차차량 감속-10"
+                lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, 10, -10)
         elif self.cruise_set_speed_kph > int(round((CS.clu_Vanz))) and not self.map_decel_only:  #이온설정속도가 차량속도보다 큰경우
             self.cut_in = False
             if 10 > dRel > 3 and lead_objspd <= 0 and 1 < int(CS.clu_Vanz) <= 7 and CS.VSetDis < 45 and ((int(round(self.target_speed)) > int(CS.VSetDis) and self.target_speed != 0) or self.target_speed == 0):
