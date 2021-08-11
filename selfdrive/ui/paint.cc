@@ -129,7 +129,7 @@ static float lock_on_scale[] = {1.f, 1.05f, 1.1f, 1.15f, 1.2f, 1.15f, 1.1f, 1.05
 
 static void draw_lead_custom(UIState *s, const cereal::RadarState::LeadData::Reader &lead_data, const vertex_data &vd) {
     auto [x, y] = vd;
-    float d_rel = lead_data.getDRel();
+    float d_rel = lead_data.getXyva()[0];
     auto intrinsic_matrix = s->wide_camera ? ecam_intrinsic_matrix : fcam_intrinsic_matrix;
     float zoom = ZOOM / intrinsic_matrix.v[0];
     float sz = std::clamp((25 * 30) / (d_rel / 3 + 30), 15.0f, 30.0f) * zoom;
@@ -313,13 +313,6 @@ static void ui_draw_world(UIState *s) {
     }
     if (lead_two.getProb() > .5 && (std::abs(lead_one.getXyva()[0] - lead_two.getXyva()[0]) > 3.0)) {
       draw_lead_custom(s, lead_two, s->scene.lead_vertices[1]);
-
-
-
-
-
-
-
     }
   }
   nvgResetScissor(s->vg);
