@@ -92,36 +92,36 @@ static void ui_draw_circle_image(const UIState *s, int center_x, int center_y, i
   }
 }
 
-// static void draw_lead(UIState *s, const cereal::ModelDataV2::LeadDataV2::Reader &lead_data, const vertex_data &vd) {
-//   // Draw lead car indicator
-//   auto [x, y] = vd;
+static void draw_lead(UIState *s, const cereal::ModelDataV2::LeadDataV2::Reader &lead_data, const vertex_data &vd) {
+  // Draw lead car indicator
+  auto [x, y] = vd;
 
-//   float fillAlpha = 0;
-//   float speedBuff = 10.;
-//   float leadBuff = 40.;
-//   float d_rel = lead_data.getXyva()[0];
-//   float v_rel = lead_data.getXyva()[2];
-//   if (d_rel < leadBuff) {
-//     fillAlpha = 255*(1.0-(d_rel/leadBuff));
-//     if (v_rel < 0) {
-//       fillAlpha += 255*(-1*(v_rel/speedBuff));
-//     }
-//     fillAlpha = (int)(fmin(fillAlpha, 255));
-//   }
+  float fillAlpha = 0;
+  float speedBuff = 10.;
+  float leadBuff = 40.;
+  float d_rel = lead_data.getXyva()[0];
+  float v_rel = lead_data.getXyva()[2];
+  if (d_rel < leadBuff) {
+    fillAlpha = 255*(1.0-(d_rel/leadBuff));
+    if (v_rel < 0) {
+      fillAlpha += 255*(-1*(v_rel/speedBuff));
+    }
+    fillAlpha = (int)(fmin(fillAlpha, 255));
+  }
 
-//   float sz = std::clamp((25 * 30) / (d_rel / 3 + 30), 15.0f, 30.0f) * 2.35;
-//   x = std::clamp(x, 0.f, s->fb_w - sz / 2);
-//   y = std::fmin(s->fb_h - sz * .6, y);
-//   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+  float sz = std::clamp((25 * 30) / (d_rel / 3 + 30), 15.0f, 30.0f) * 2.35;
+  x = std::clamp(x, 0.f, s->fb_w - sz / 2);
+  y = std::fmin(s->fb_h - sz * .6, y);
+  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
 
-//   if (s->scene.radarDistance < 149) {                                         //radar가 인식되면
-//     draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_ORANGE); //orange ==> red
-//     ui_draw_text(s, x, y + sz/1.5f, "R", 20 * 2.5, COLOR_WHITE, "sans-bold"); 
-//   } else {                                                                                 //camera가 인식되면
-//     draw_chevron(s, x, y, sz, nvgRGBA(150, 0, 200, fillAlpha), nvgRGBA(0, 150, 200, 200)); //oceanblue ==> purple
-//     ui_draw_text(s, x, y + sz/1.5f, "C", 20 * 2.5, COLOR_WHITE, "sans-bold"); 
-//   }
-// }
+  if (s->scene.radarDistance < 149) {                                         //radar가 인식되면
+    draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_ORANGE); //orange ==> red
+    ui_draw_text(s, x, y + sz/1.5f, "R", 20 * 2.5, COLOR_WHITE, "sans-bold"); 
+  } else {                                                                                 //camera가 인식되면
+    draw_chevron(s, x, y, sz, nvgRGBA(150, 0, 200, fillAlpha), nvgRGBA(0, 150, 200, 200)); //oceanblue ==> purple
+    ui_draw_text(s, x, y + sz/1.5f, "C", 20 * 2.5, COLOR_WHITE, "sans-bold"); 
+  }
+}
 
 static float lock_on_rotation[] = {0.f, 0.1f*NVG_PI, 0.3f*NVG_PI, 0.6f*NVG_PI, 1.0f*NVG_PI, 1.4f*NVG_PI, 1.7f*NVG_PI, 1.9f*NVG_PI, 2.0f*NVG_PI};
 
@@ -309,10 +309,16 @@ static void ui_draw_world(UIState *s) {
     auto lead_one = (*s->sm)["modelV2"].getModelV2().getLeads()[0];
     auto lead_two = (*s->sm)["modelV2"].getModelV2().getLeads()[1];
     if (lead_one.getProb() > .5) {
-      draw_lead_custom(s, lead_one, s->scene.lead_vertices[0]);
+      if (true) { //선택옵션 추가 필요
+        draw_lead_custom(s, lead_one, s->scene.lead_vertices[0]);}
+      else {
+        draw_lead(s, lead_one, s->scene.lead_vertices[0]);}
     }
     if (lead_two.getProb() > .5 && (std::abs(lead_one.getXyva()[0] - lead_two.getXyva()[0]) > 3.0)) {
-      draw_lead_custom(s, lead_two, s->scene.lead_vertices[1]);
+      if (true) {
+        draw_lead_custom(s, lead_two, s->scene.lead_vertices[1]);}
+      else {
+        draw_lead(s, lead_two, s->scene.lead_vertices[1]);}
     }
   }
   nvgResetScissor(s->vg);
