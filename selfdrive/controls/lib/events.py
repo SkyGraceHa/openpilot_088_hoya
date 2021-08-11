@@ -172,7 +172,7 @@ class EngagementAlert(Alert):
     super().__init__("", "",
                      AlertStatus.normal, AlertSize.none,
                      Priority.MID, VisualAlert.none,
-                     audible_alert, .2, 0., 0.),
+                     audible_alert, 2.5, 0., 0.),
 
 
 class NormalPermanentAlert(Alert):
@@ -257,9 +257,7 @@ def standstill_alert(CP, sm, metric):
 
 EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, bool], Alert]]]] = {
   # ********** events with no alerts **********
-
-  EventName.stockFcw: {},
-
+  
   # ********** events only containing alerts displayed in all states **********
 
   EventName.modelLongAlert: {
@@ -288,7 +286,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       "오픈파일럿 사용준비가 되었습니다",
       "안전운전을 위해 항상 핸들을 잡고 도로교통 상황을 주시하세요",
       AlertStatus.normal, AlertSize.mid,
-      Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., 5.),
+      Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., 1.),
   },
 
   EventName.startupMaster: {
@@ -378,11 +376,20 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
 
   EventName.stockAeb: {
     ET.PERMANENT: Alert(
-      "브레이크!",
+      "브레이크(AEB)!",
       "순정 AEB: 추돌 위험",
       AlertStatus.critical, AlertSize.full,
       Priority.HIGHEST, VisualAlert.fcw, AudibleAlert.none, 1., 2., 2.),
     ET.NO_ENTRY: NoEntryAlert("순정 AEB: 추돌 위험"),
+  },
+
+  EventName.stockFcw: {
+    ET.PERMANENT: Alert(
+      "브레이크(FCW)!",
+      "순정 FCW: 추돌 위험",
+      AlertStatus.critical, AlertSize.full,
+      Priority.HIGHEST, VisualAlert.fcw, AudibleAlert.none, 1., 2., 2.),
+    ET.NO_ENTRY: NoEntryAlert("순정 FCW: 추돌 위험"),
   },
 
   EventName.fcw: {
