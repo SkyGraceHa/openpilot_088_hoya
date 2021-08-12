@@ -676,14 +676,14 @@ static void ui_draw_vision_cameradist(UIState *s) {
   NVGcolor text_color = COLOR_WHITE;
 
   if (s->is_speed_over_limit) {
-    box_color = nvgRGBA(180, 0, 0, 200);
-    text_color = COLOR_WHITE;
+      if float(int(cameradist)/s->scene.liveMapData.opkrspeedlimit) < 3.0 
+           {box_color = nvgRGBA(183, 0, 0, 200);} // 잔여거리가 단속속도보다 3배 이내이면
+      else {box_color = COLOR_OCHRE_ALPHA(200);}
   } else if (s->scene.liveMapData.opkrspeedlimit > 29 && !s->is_speed_over_limit) {
-    box_color = nvgRGBA(120, 120, 120, 200);
-    text_color = COLOR_BLACK;
+      box_color = nvgRGBA(0, 120, 0, 200);
   } else {
-    box_color = COLOR_WHITE_ALPHA(0);
-    text_color = COLOR_WHITE_ALPHA(0);
+      box_color = COLOR_WHITE_ALPHA(0);
+      text_color = COLOR_WHITE_ALPHA(0);
   }
 
   ui_fill_rect(s->vg, rect, box_color, 20.);
@@ -766,38 +766,38 @@ static void ui_draw_vision_event(UIState *s) {
 
   if (!s->scene.comma_stock_ui){
     // 버스전용차로(246)
-    if (s->scene.liveMapData.opkrspeedsign == 246) {ui_draw_image(s, {center_x, center_y, 200, 200}, "bus_only", 1.0f);} 
+    if (s->scene.liveMapData.opkrspeedsign == 246) {ui_draw_image(s, {center_x, center_y, 200, 200}, "bus_only", 0.8f);} 
     // 차선변경금지(198 or 199)일 경우
     if (s->scene.mapSign == 198 || s->scene.mapSign == 199 || s->scene.mapSign == 249) {
-      ui_draw_image(s, {center_x, center_y, 200, 200}, "do_not_change_lane", 1.0f);}
+      ui_draw_image(s, {center_x, center_y, 200, 200}, "do_not_change_lane", 0.8f);}
     // 구간단속구간(165)일 경우
     if (s->scene.mapSign == 165 && s->scene.liveMapData.opkrspeedlimit != 0) { 
-      if (s->scene.liveMapData.opkrspeedlimit < 70) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_60", 1.0f);}
-      else if (s->scene.liveMapData.opkrspeedlimit < 80) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_70", 1.0f);} 
-      else if (s->scene.liveMapData.opkrspeedlimit < 90) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_80", 1.0f);}
-      else if (s->scene.liveMapData.opkrspeedlimit < 100) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_90", 1.0f);}
-      else if (s->scene.liveMapData.opkrspeedlimit < 110) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_100", 1.0f);}
-      else if (s->scene.liveMapData.opkrspeedlimit < 120) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_110", 1.0f);}
+      if (s->scene.liveMapData.opkrspeedlimit < 70) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_60", 0.8f);}
+      else if (s->scene.liveMapData.opkrspeedlimit < 80) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_70", 0.8f);} 
+      else if (s->scene.liveMapData.opkrspeedlimit < 90) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_80", 0.8f);}
+      else if (s->scene.liveMapData.opkrspeedlimit < 100) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_90", 0.8f);}
+      else if (s->scene.liveMapData.opkrspeedlimit < 110) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_100", 0.8f);}
+      else if (s->scene.liveMapData.opkrspeedlimit < 120) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_110", 0.8f);}
     } 
     // 일반적인 과속단속구간(200 or 231)일 경우  
     if ((s->scene.mapSign == 135 || s->scene.mapSign == 150 || s->scene.mapSign == 200 || s->scene.mapSign == 231) && s->scene.liveMapData.opkrspeedlimit > 29) {
-      if (s->scene.liveMapData.opkrspeedlimit < 40) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_30", 1.0f);
-                                                    ui_draw_image(s, {960-240, 540+50, 480, 480}, "speed_S30", 0.35f);} //중앙 스쿨존 이미지
-      else if (s->scene.liveMapData.opkrspeedlimit < 50) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_40", 1.0f);} 
-      else if (s->scene.liveMapData.opkrspeedlimit < 60) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_50", 1.0f);}
-      else if (s->scene.liveMapData.opkrspeedlimit < 70) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_60", 1.0f);} 
-      else if (s->scene.liveMapData.opkrspeedlimit < 80) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_70", 1.0f);} 
-      else if (s->scene.liveMapData.opkrspeedlimit < 90) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_80", 1.0f);} 
-      else if (s->scene.liveMapData.opkrspeedlimit < 100) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_90", 1.0f);}
-      else if (s->scene.liveMapData.opkrspeedlimit < 110) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_100", 1.0f);}
-      else if (s->scene.liveMapData.opkrspeedlimit < 120) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_110", 1.0f);}
+      if (s->scene.liveMapData.opkrspeedlimit < 40) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_30", 0.8f);
+                                                    ui_draw_image(s, {960-200, 540+100, 400, 400}, "speed_S30", 0.2f);} //중앙 스쿨존 이미지
+      else if (s->scene.liveMapData.opkrspeedlimit < 50) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_40", 0.8f);} 
+      else if (s->scene.liveMapData.opkrspeedlimit < 60) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_50", 0.8f);}
+      else if (s->scene.liveMapData.opkrspeedlimit < 70) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_60", 0.8f);} 
+      else if (s->scene.liveMapData.opkrspeedlimit < 80) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_70", 0.8f);} 
+      else if (s->scene.liveMapData.opkrspeedlimit < 90) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_80", 0.8f);} 
+      else if (s->scene.liveMapData.opkrspeedlimit < 100) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_90", 0.8f);}
+      else if (s->scene.liveMapData.opkrspeedlimit < 110) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_100", 0.8f);}
+      else if (s->scene.liveMapData.opkrspeedlimit < 120) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_110", 0.8f);}
     }
     //가변구간
     if (s->scene.mapSign == 195 || s->scene.mapSign == 197) {
-      ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_var", 0.25f); }
+      ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_var", 0.8f); }
     //과속방지턱
     if (s->scene.liveMapData.opkrspeedsign == 124) {
-      ui_draw_image(s, {960-240, 540+20, 480, 480}, "speed_bump", 0.35f); }
+      ui_draw_image(s, {960-200, 540+50, 400, 400}, "speed_bump", 0.2f); }
   }
 
   //draw compass by opkr and re-designed by hoya
