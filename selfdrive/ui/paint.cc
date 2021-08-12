@@ -673,21 +673,26 @@ static void ui_draw_vision_cameradist(UIState *s) {
 
   const Rect rect = {(bdr_s) + 2 * (184 + 15), int((bdr_s)) + 180, 200, 100};   
   NVGcolor box_color = COLOR_WHITE;
+  NVGcolor box_line_color = COLOR_WHITE_ALPHA(100);
   NVGcolor text_color = COLOR_WHITE;
 
   if (s->is_speed_over_limit) {
-      if (float(int(cameradist)/s->scene.liveMapData.opkrspeedlimit) < 3.0 )
-           {box_color = nvgRGBA(183, 0, 0, 200);} // 잔여거리가 단속속도보다 3배 이내이면
-      else {box_color = COLOR_OCHRE_ALPHA(200);}
+      if (float(int(cameradist)/s->scene.liveMapData.opkrspeedlimit) < 3.0 ){// 잔여거리가 단속속도보다 3배 이내이면
+        box_color = nvgRGBA(180, 0, 0, 200);      
+      } 
+      else {
+        box_color = COLOR_OCHRE_ALPHA(200);
+      }
   } else if (s->scene.liveMapData.opkrspeedlimit > 29 && !s->is_speed_over_limit) {
       box_color = nvgRGBA(0, 120, 0, 200);
   } else {
       box_color = COLOR_WHITE_ALPHA(0);
+      box_line_color = COLOR_WHITE_ALPHA(0);
       text_color = COLOR_WHITE_ALPHA(0);
   }
 
   ui_fill_rect(s->vg, rect, box_color, 20.);
-  ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(100), 5, 20.);
+  ui_draw_rect(s->vg, rect, box_line_color, 5, 20.);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE); 
 
   if (s->scene.liveMapData.opkrspeedlimitdist > 1000){
