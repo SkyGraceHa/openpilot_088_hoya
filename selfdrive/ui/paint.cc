@@ -612,7 +612,7 @@ static void ui_draw_vision_maxspeed(UIState *s) {
 
   int viz_max_o = 184; //offset value to move right
   const Rect rect = {bdr_s, bdr_s, 184+viz_max_o, 202};
-  ui_fill_rect(s->vg, rect, COLOR_BLACK_ALPHA(100), 30.);
+  ui_fill_rect(s->vg, rect, COLOR_BLACK_ALPHA(100), 20.);
   ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(100), 10, 20.);
 
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
@@ -643,7 +643,7 @@ static void ui_draw_vision_cruise_speed(UIState *s) {
   } else if (s->scene.controls_state.getEnabled()) {
     color = COLOR_WHITE_ALPHA(75);
   }
-  ui_fill_rect(s->vg, rect, color, 30.);
+  ui_fill_rect(s->vg, rect, color, 20.);
   ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(100), 10, 20.);
 
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
@@ -687,19 +687,20 @@ static void ui_draw_vision_cameradist(UIState *s) {
   }
 
   ui_fill_rect(s->vg, rect, box_color, 20.);
+  ui_draw_rect(s->vg, rect, COLOR_WHITE_ALPHA(100), 5, 20.);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE); 
 
   if (s->scene.liveMapData.opkrspeedlimitdist > 1000){
     //const std::string cameradist_str = std::to_string((int)std::nearbyint(cameradist));
-    ui_draw_text(s, rect.centerX() - 20, int(bdr_s)+260, str, 40 * 2.0, text_color, "sans-bold");
-    ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+265, "km", 30 * 1.6, text_color, "sans-semibold");
+    ui_draw_text(s, rect.centerX() - 20, int(bdr_s)+255, str, 40 * 2.0, text_color, "sans-bold");
+    ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+260, "km", 30 * 1.6, text_color, "sans-semibold");
   } else if (s->scene.liveMapData.opkrspeedlimit > 29){    
     const std::string cameradist_str = std::to_string((int)std::nearbyint(cameradist));
-    ui_draw_text(s, rect.centerX() - 15, int(bdr_s)+260, cameradist_str.c_str(), 40 * 2.0, text_color, "sans-bold");
-    ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+265, "m", 30 * 1.6, text_color, "sans-semibold");
+    ui_draw_text(s, rect.centerX() - 15, int(bdr_s)+255, cameradist_str.c_str(), 40 * 2.0, text_color, "sans-bold");
+    ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+260, "m", 30 * 1.6, text_color, "sans-semibold");
   } else {
     const std::string cameradist_str = std::to_string((int)std::nearbyint(cameradist));
-    ui_draw_text(s, rect.centerX() - 15, int(bdr_s)+260, cameradist_str.c_str(), 36 * 2.0, text_color, "sans-semibold");
+    ui_draw_text(s, rect.centerX() - 15, int(bdr_s)+255, cameradist_str.c_str(), 36 * 2.0, text_color, "sans-semibold");
     ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+260, "m", 26 * 1.6, text_color, "sans-semibold");
   } 
 }
