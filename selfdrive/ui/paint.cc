@@ -716,9 +716,9 @@ static void ui_draw_vision_speed(UIState *s) {
   // turning blinker from kegman, moving signal by OPKR
   if(scene->leftBlinker || scene->rightBlinker) {
     s->scene.blinker_blinkingrate -= 5;
-    if(scene->blinker_blinkingrate<0) s->scene.blinker_blinkingrate = 120;
+    if(scene->blinker_blinkingrate<0) s->scene.blinker_blinkingrate = 70;
 
-    float progress = (120 - s->scene.blinker_blinkingrate) / 120.0;
+    float progress = (70 - s->scene.blinker_blinkingrate) / 70.0;
     float offset = progress * (6.4 - 1.0) + 1.0;
     if (offset < 1.0) offset = 1.0;
     if (offset > 6.4) offset = 6.4;
@@ -733,7 +733,7 @@ static void ui_draw_vision_speed(UIState *s) {
       nvgLineTo(s->vg, viz_speed_x - (viz_add*offset) - (viz_speed_w/2), (header_h/2.1));
       nvgLineTo(s->vg, viz_speed_x - (viz_add*offset)                    , (header_h/1.4));
       nvgClosePath(s->vg);
-      nvgFillColor(s->vg, nvgRGBA(255,100,0,(scene->blinker_blinkingrate<=120 && scene->blinker_blinkingrate>=50)?130:0));
+      nvgFillColor(s->vg, nvgRGBA(255,100,0,(scene->blinker_blinkingrate<=70 && scene->blinker_blinkingrate>=30)?180:0));
       nvgFill(s->vg);
     }
     if(s->scene.rightBlinker) {
@@ -742,7 +742,7 @@ static void ui_draw_vision_speed(UIState *s) {
       nvgLineTo(s->vg, viz_speed_x + (viz_add*offset) + (viz_speed_w*1.5), (header_h/2.1));
       nvgLineTo(s->vg, viz_speed_x + (viz_add*offset) + viz_speed_w      , (header_h/1.4));
       nvgClosePath(s->vg);
-      nvgFillColor(s->vg, nvgRGBA(255,100,0,(scene->blinker_blinkingrate<=120 && scene->blinker_blinkingrate>=50)?130:0));
+      nvgFillColor(s->vg, nvgRGBA(255,100,0,(scene->blinker_blinkingrate<=70 && scene->blinker_blinkingrate>=30)?180:0));
       nvgFill(s->vg);
     }    
   }
