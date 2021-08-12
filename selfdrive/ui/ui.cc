@@ -65,14 +65,11 @@ static int get_path_length_idx(const cereal::ModelDataV2::XYZTData::Reader &line
   return max_idx;
 }
 
-static void update_leads(UIState *s, const cereal::ModelDataV2::Reader &model) {
-  auto leads = model.getLeadsV3();
-  auto model_position = model.getPosition();
-  for (int i = 0; i < 2; ++i) {
-    if (leads[i].getProb() > 0.5) {
-      float z = model_position.getZ()[get_path_length_idx(model_position, leads[i].getX()[0])];
-      calib_frame_to_full_frame(s, leads[i].getX()[0], leads[i].getY()[0], z + 1.22, &s->scene.lead_vertices[i]);
-    }
+static void update_leads(UIState *s, const cereal::ModelDataV2::LeadDataV2::Reader &lead_data, std::optional<cereal::ModelDataV2::XYZTData::Reader> line) {
+  if (lead_data.getProb() > 0.5) {
+    float z = line ? (*line).getZ()[get_path_length_idx(*line, lead_data.getXyva()[0])] : 0.0;
+    calib_frame_to_full_frame(s, lead_data.getXyva()[0], lead_data.getXyva()[1], z + 1.22, &s->scene.lead_vertices[0]);
+
   }
 }
 
@@ -116,9 +113,9 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
 
   scene.lateral_plan = sm["lateralPlan"].getLateralPlan();
   // update path
-  auto lead_one = model.getLeadsV3()[0];
+  auto lead_one = (*s->sm)["modelV2"].getModelV2().getLeads()[0];
   if (lead_one.getProb() > 0.5) {
-    const float lead_d = lead_one.getX()[0] * 2.;
+    const float lead_d = lead_one.getXyva()[0] * 2.;
     max_distance = std::clamp((float)(lead_d - fmin(lead_d * 0.35, 10.)), 0.0f, max_distance);
   }
   max_idx = get_path_length_idx(model_position, max_distance);
