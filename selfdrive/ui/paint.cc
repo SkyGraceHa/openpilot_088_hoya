@@ -716,7 +716,7 @@ static void ui_draw_vision_speed(UIState *s) {
   // turning blinker from kegman, moving signal by OPKR
   if(scene->leftBlinker || scene->rightBlinker) {
     s->scene.blinker_blinkingrate -= 5;
-    if(scene->blinker_blinkingrate<0) s->scene.blinker_blinkingrate = 65;
+    if(scene->blinker_blinkingrate<0) s->scene.blinker_blinkingrate = 65; // blinker_blinkingrate 는 IG/FL 깜빡이 주기에 거의 맞춤
 
     float progress = (65 - s->scene.blinker_blinkingrate) / 65.0;
     float offset = progress * (6.4 - 1.0) + 1.0;
@@ -729,9 +729,9 @@ static void ui_draw_vision_speed(UIState *s) {
 
     if(s->scene.leftBlinker) {
       nvgBeginPath(s->vg);
-      nvgMoveTo(s->vg, viz_speed_x - (viz_add*offset)                    , (header_h/4.2));
+      nvgMoveTo(s->vg, viz_speed_x - (viz_add*offset)                  , (header_h/4.2));
       nvgLineTo(s->vg, viz_speed_x - (viz_add*offset) - (viz_speed_w/2), (header_h/2.1));
-      nvgLineTo(s->vg, viz_speed_x - (viz_add*offset)                    , (header_h/1.4));
+      nvgLineTo(s->vg, viz_speed_x - (viz_add*offset)                  , (header_h/1.4));
       nvgClosePath(s->vg);
       nvgFillColor(s->vg, nvgRGBA(255,100,0,(scene->blinker_blinkingrate<=65 && scene->blinker_blinkingrate>=30)?180:0));
       nvgFill(s->vg);
@@ -765,12 +765,12 @@ static void ui_draw_vision_event(UIState *s) {
   const int center_y = int(bdr_s);
 
   if (!s->scene.comma_stock_ui){
-    // 버스전용차로(246)
+    // 버스전용차로( 246 )일 경우
     if (s->scene.liveMapData.opkrspeedsign == 246) {ui_draw_image(s, {center_x, center_y, 200, 200}, "bus_only", 0.8f);} 
-    // 차선변경금지(198 or 199)일 경우
+    // 차선변경금지( 198 || 199 || 249 )일 경우
     if (s->scene.mapSign == 198 || s->scene.mapSign == 199 || s->scene.mapSign == 249) {
       ui_draw_image(s, {center_x, center_y, 200, 200}, "do_not_change_lane", 0.8f);}
-    // 구간단속구간(165)일 경우
+    // 구간단속구간( 165 )일 경우
     if (s->scene.mapSign == 165 && s->scene.liveMapData.opkrspeedlimit != 0) { 
       if (s->scene.liveMapData.opkrspeedlimit < 70) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_60", 0.8f);}
       else if (s->scene.liveMapData.opkrspeedlimit < 80) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_70", 0.8f);} 
@@ -779,7 +779,7 @@ static void ui_draw_vision_event(UIState *s) {
       else if (s->scene.liveMapData.opkrspeedlimit < 110) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_100", 0.8f);}
       else if (s->scene.liveMapData.opkrspeedlimit < 120) {ui_draw_image(s, {center_x, center_y, 200, 200}, "section_110", 0.8f);}
     } 
-    // 일반적인 과속단속구간(200 or 231)일 경우  
+    // 일반적인 과속단속구간( 135 || 150 || 200 || 231)일 경우  
     if ((s->scene.mapSign == 135 || s->scene.mapSign == 150 || s->scene.mapSign == 200 || s->scene.mapSign == 231) && s->scene.liveMapData.opkrspeedlimit > 29) {
       if (s->scene.liveMapData.opkrspeedlimit < 40) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_30", 0.8f);
                                                     ui_draw_image(s, {960-200, 540+100, 400, 400}, "speed_S30", 0.2f);} //중앙 스쿨존 이미지
@@ -792,10 +792,10 @@ static void ui_draw_vision_event(UIState *s) {
       else if (s->scene.liveMapData.opkrspeedlimit < 110) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_100", 0.8f);}
       else if (s->scene.liveMapData.opkrspeedlimit < 120) {ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_110", 0.8f);}
     }
-    //가변구간
+    //가변구간( 195 || 197) 일 경우
     if (s->scene.mapSign == 195 || s->scene.mapSign == 197) {
       ui_draw_image(s, {center_x, center_y, 200, 200}, "speed_var", 0.8f); }
-    //과속방지턱
+    //과속방지턱( 124 ) 일 경우
     if (s->scene.liveMapData.opkrspeedsign == 124) {
       ui_draw_image(s, {960-200, 540+50, 400, 400}, "speed_bump", 0.2f); }
   }
