@@ -1,7 +1,8 @@
 #include "selfdrive/ui/qt/home.h"
 
 #include <QDate>
-#include <QDateTime>
+#include <QTime>
+#include <QLocale>
 #include <QHBoxLayout>
 #include <QMouseEvent>
 #include <QVBoxLayout>
@@ -305,23 +306,11 @@ void OffroadHome::hideEvent(QHideEvent *event) {
 }
 
 void OffroadHome::refresh() {
-  QString dayofweek = "";
-  if (QDate::currentDate().dayOfWeek() == 1) {
-    dayofweek = "월요일";
-  } else if (QDate::currentDate().dayOfWeek() == 2) {
-    dayofweek = "화요일";
-  } else if (QDate::currentDate().dayOfWeek() == 3) {
-    dayofweek = "수요일";
-  } else if (QDate::currentDate().dayOfWeek() == 4) {
-    dayofweek = "목요일";
-  } else if (QDate::currentDate().dayOfWeek() == 5) {
-    dayofweek = "금요일";
-  } else if (QDate::currentDate().dayOfWeek() == 6) {
-    dayofweek = "토요일";
-  } else if (QDate::currentDate().dayOfWeek() == 7) {
-    dayofweek = "일요일";
-  }
-  date->setText(QDateTime::currentDateTime().toString("yyyy년 M월 d일 " + dayofweek));
+  // opkr
+  QLocale::setDefault(QLocale::Korean);
+  QString date_kr = QDate::currentDate().toString(Qt::DefaultLocaleLongDate);
+  QString time_kr = QTime::currentTime().toString(Qt::DefaultLocaleShortDate);
+  date->setText(date_kr + " " + time_kr);
 
   bool updateAvailable = update_widget->refresh();
   int alerts = alerts_widget->refresh();

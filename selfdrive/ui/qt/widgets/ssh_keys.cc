@@ -244,10 +244,16 @@ OpenpilotView::OpenpilotView() : AbstractControl("오픈파일럿 주행화면 �
 
 void OpenpilotView::refresh() {
   bool param = params.getBool("IsOpenpilotViewEnabled");
+  QString car_param = QString::fromStdString(params.get("CarParams"));
   if (param) {
     btn.setText("미리보기해제");
   } else {
     btn.setText("미리보기");
+  }
+  if (car_param.length()) {
+    btn.setEnabled(false);
+  } else {
+    btn.setEnabled(true);
   }
 }
 
@@ -2166,7 +2172,7 @@ void AutoEnableSpeed::refresh() {
   btnplus.setText("+");
 }
 
-CamDecelDistAdd::CamDecelDistAdd() : AbstractControl("안전구간감속 거리 늘림(%)", "안전구간 감속시 감속시작 거리를 늘립니다.", "../assets/offroad/icon_shell.png") {
+CamDecelDistAdd::CamDecelDistAdd() : AbstractControl("안전감속시작거리 조정(%)", "안전구간 감속시 감속시작 거리를 줄이거나 늘립니다.(+값: 원거리에서 감속시작, -값: 근거리에서 감속시작) ※감속시작 거리 = 현재속도에 따른 보간값 X 현재속도와 캠속도 차이에 따른 보간값 X 줄임/늘림 비율", "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -2197,8 +2203,8 @@ CamDecelDistAdd::CamDecelDistAdd() : AbstractControl("안전구간감속 거리 
     auto str = QString::fromStdString(params.get("SafetyCamDecelDistGain"));
     int value = str.toInt();
     value = value - 5;
-    if (value <= 0 ) {
-      value = 0;
+    if (value <= -100 ) {
+      value = -100;
     }
     QString values = QString::number(value);
     params.put("SafetyCamDecelDistGain", values.toStdString());
