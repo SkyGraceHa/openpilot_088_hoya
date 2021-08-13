@@ -190,7 +190,7 @@ class Controls:
     self.mpc_frame_sr = 0
 
     self.steerRatio_Max = float(Decimal(params.get("SteerRatioMaxAdj", encoding="utf8")) * Decimal('0.01'))
-    self.steer_angle_range = [5, 30]
+    self.steer_angle_range = [5, 50]
     self.steerRatio_range = [self.CP.steerRatio, self.steerRatio_Max]
     self.new_steerRatio = self.CP.steerRatio
     self.new_steerRatio_prev = self.CP.steerRatio
@@ -506,7 +506,7 @@ class Controls:
     # opkr
     output_scale = lat_plan.outputScale
     if not self.live_sr:
-      if abs(output_scale) >= 0.8 and CS.vEgo > 8 and not CS.steeringPressed:
+      if abs(output_scale) >= self.CP.steerMaxV[0] and CS.vEgo > 8 and not CS.steeringPressed:
         self.mpc_frame_sr += 1
         if self.mpc_frame_sr > 20:
           self.new_steerRatio_prev = interp(CS.steeringAngleDeg, self.steer_angle_range, self.steerRatio_range)
@@ -514,7 +514,7 @@ class Controls:
             self.new_steerRatio = self.new_steerRatio_prev
       else:
         self.mpc_frame += 1
-        if self.mpc_frame % 100 == 0:
+        if self.mpc_frame % 50 == 0:
           self.new_steerRatio -= 0.1
           if self.new_steerRatio <= self.CP.steerRatio:
             self.new_steerRatio = self.CP.steerRatio
@@ -784,7 +784,7 @@ class Controls:
     self.publish_logs(CS, start_time, actuators, lac_log)
     self.prof.checkpoint("Sent")
 
-    if not CS.cruiseState.enabled and not self.hyundai_lkas:
+    if not CS.cruiseState.enabled and not self.hyundai_lkas and not self.soft_disable_timer:
       self.hyundai_lkas = True
 
   def controlsd_thread(self):

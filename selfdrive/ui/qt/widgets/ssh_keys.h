@@ -258,18 +258,6 @@ public:
   }
 };
 
-class LiveTuneToggle : public ToggleControl {
-  Q_OBJECT
-
-public:
-  LiveTuneToggle() : ToggleControl("라이브 튜너 사용", "이 옵션을 켜면 제어값이 실시간으로 적용됩니다.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrLiveTune")) {
-    QObject::connect(this, &LiveTuneToggle::toggleFlipped, [=](int state) {
-      char value = state ? '1' : '0';
-      Params().put("OpkrLiveTune", &value, 1);
-    });
-  }
-};
-
 class ShaneFeedForward : public ToggleControl {
   Q_OBJECT
 
@@ -462,19 +450,43 @@ public:
   }
 };
 
-class LiveCameraOffsetToggle : public ToggleControl {
+class LiveTunePanelToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  LiveCameraOffsetToggle() : ToggleControl("Live Camera Offset", "카메라 오프셋을 실시간으로 조정합니다. 화면에 관련 UI가 표시되며, 실시간 튜닝 혹은 주행중 실시간 적용시 사용하세요.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrLiveCameraOffsetEnable")) {
-    QObject::connect(this, &LiveCameraOffsetToggle::toggleFlipped, [=](int state) {
+  LiveTunePanelToggle() : ToggleControl("라이브튠 사용 및 UI 표시", "화면에 라이브 튜닝 관련 UI를 표시합니다. 각종 튜닝 수치를 주행화면에서 라이브로 조정가능합니다. 조정 시 파라미터에 반영되며 토글을 끈 후 재부팅 해도 값이 유지됩니다.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrLiveTunePanelEnable")) {
+    QObject::connect(this, &LiveTunePanelToggle::toggleFlipped, [=](int state) {
       char value = state ? '1' : '0';
-      Params().put("OpkrLiveCameraOffsetEnable", &value, 1);
+      Params().put("OpkrLiveTunePanelEnable", &value, 1);
       if (state) {
-        QUIState::ui_state.scene.live_camera_offset_enable = true;
+        QUIState::ui_state.scene.live_tune_panel_enable = true;
       } else {
-        QUIState::ui_state.scene.live_camera_offset_enable = false;
+        QUIState::ui_state.scene.live_tune_panel_enable = false;
       }
+    });
+  }
+};
+
+class KRDateToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  KRDateToggle() : ToggleControl("주행화면 날짜 표시", "주행화면에 현재 날짜를 표시합니다.", "../assets/offroad/icon_shell.png", Params().getBool("KRDateShow")) {
+    QObject::connect(this, &KRDateToggle::toggleFlipped, [=](int state) {
+      char value = state ? '1' : '0';
+      Params().put("KRDateShow", &value, 1);
+    });
+  }
+};
+
+class KRTimeToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  KRTimeToggle() : ToggleControl("주행화면 시간 표시", "주행화면에 현재 시간을 표시합니다.", "../assets/offroad/icon_shell.png", Params().getBool("KRTimeShow")) {
+    QObject::connect(this, &KRTimeToggle::toggleFlipped, [=](int state) {
+      char value = state ? '1' : '0';
+      Params().put("KRTimeShow", &value, 1);
     });
   }
 };

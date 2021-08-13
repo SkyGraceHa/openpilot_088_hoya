@@ -30,9 +30,11 @@ class LatControlLQR():
     self.sat_count_rate = 1.0 * DT_CTRL
     self.sat_limit = CP.steerLimitTimer
 
-    self.live_tune_enabled = self.params.get_bool("OpkrLiveTune")
+    self.live_tune_enabled = False
 
     self.reset()
+
+    self.ll_timer = 0
 
   def reset(self):
     self.i_lqr = 0.0
@@ -43,7 +45,7 @@ class LatControlLQR():
     if self.mpc_frame % 300 == 0:
       self.scale_ = float(Decimal(self.params.get("Scale", encoding="utf8")) * Decimal('1.0'))
       self.ki_ = float(Decimal(self.params.get("LqrKi", encoding="utf8")) * Decimal('0.001'))
-      self.dc_gain_ = float(Decimal(self.params.get("DcGain", encoding="utf8")) * Decimal('0.0001'))
+      self.dc_gain_ = float(Decimal(self.params.get("DcGain", encoding="utf8")) * Decimal('0.00001'))
       self.scale = self.scale_
       self.ki = self.ki_
       self.dc_gain = self.dc_gain_
@@ -63,6 +65,10 @@ class LatControlLQR():
     return self.sat_count > self.sat_limit
 
   def update(self, active, CS, CP, VM, params, desired_curvature, desired_curvature_rate):
+    self.ll_timer += 1
+    if self.ll_timer > 100:
+      self.ll_timer = 0
+      self.live_tune_enabled = self.params.get_bool("OpkrLiveTunePanelEnable")
     if self.live_tune_enabled:
       self.live_tune(CP)
 
