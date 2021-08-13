@@ -109,10 +109,10 @@ class CarInterfaceBase():
   def create_common_events(self, cs_out, extra_gears=None, gas_resume_speed=-1, pcm_enable=True):
     events = Events()
 
-    if cs_out.doorOpen:
-      events.add(EventName.doorOpen)
-    if cs_out.seatbeltUnlatched:
-      events.add(EventName.seatbeltNotLatched)
+    #if cs_out.doorOpen:
+    #  events.add(EventName.doorOpen)
+    #if cs_out.seatbeltUnlatched:
+    #  events.add(EventName.seatbeltNotLatched)
     if cs_out.gearShifter != GearShifter.drive and (extra_gears is None or
        cs_out.gearShifter not in extra_gears) and cs_out.cruiseState.enabled:
       events.add(EventName.wrongGear)
