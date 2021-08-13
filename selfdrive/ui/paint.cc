@@ -1369,6 +1369,7 @@ void draw_kr_date_time(UIState *s) {
   } else if (tm.tm_wday == 6) {
     strcpy(dayofweek, "SAT");
   }
+
   if (s->scene.kr_date_show && s->scene.kr_time_show) {
     snprintf(now,sizeof(now),"%04d-%02d-%02d %s %02d:%02d:%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, dayofweek, tm.tm_hour, tm.tm_min, tm.tm_sec);
   } else if (s->scene.kr_date_show) {
