@@ -406,7 +406,7 @@ class CarController():
 
     # 차간거리를 주행속도에 맞춰 변환하기
     if CS.acc_active and not CS.out.gasPressed and not CS.out.brakePressed:
-      if (CS.out.vEgo * CV.MS_TO_KPH) >= 75: # 시속 75킬로 이상 GAP_DIST 4칸 유지
+      if (CS.out.vEgo * CV.MS_TO_KPH) >= 60: # 시속 60킬로 이상 GAP_DIST 4칸 유지
         self.cruise_gap_auto_switch_timer += 1
         if self.cruise_gap_auto_switch_timer > 25 and (CS.cruiseGapSet != 4.0) :
           can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
@@ -414,7 +414,7 @@ class CarController():
           self.cruise_gap_auto_switch_timer = 0
         if CS.cruiseGapSet == 4.0:
           self.cruise_gap_auto_switch_timer = 0
-      elif (CS.out.vEgo * CV.MS_TO_KPH) >= 55 :# 시속 55킬로 이상 GAP_DIST 3칸 만들기
+      elif (CS.out.vEgo * CV.MS_TO_KPH) >= 30 :# 시속 30킬로 이상 GAP_DIST 3칸 만들기
         self.cruise_gap_auto_switch_timer += 1
         if self.cruise_gap_auto_switch_timer > 25 and (CS.cruiseGapSet != 3.0) :
           can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
@@ -422,7 +422,7 @@ class CarController():
           self.cruise_gap_auto_switch_timer = 0
         if CS.cruiseGapSet == 3.0:
           self.cruise_gap_auto_switch_timer = 0          
-      elif (CS.out.vEgo * CV.MS_TO_KPH) >= 30 :# 시속 30킬로 이상 GAP_DIST 2칸 만들기
+      elif (CS.out.vEgo * CV.MS_TO_KPH) >= 10 :# 시속 10킬로 이상 GAP_DIST 2칸 만들기
         self.cruise_gap_auto_switch_timer += 1
         if self.cruise_gap_auto_switch_timer > 25 and (CS.cruiseGapSet != 2.0) :
           can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
@@ -430,7 +430,7 @@ class CarController():
           self.cruise_gap_auto_switch_timer = 0
         if CS.cruiseGapSet == 2.0:
           self.cruise_gap_auto_switch_timer = 0          
-      elif (CS.out.vEgo * CV.MS_TO_KPH) < 10 : # 시속 20킬로 미만 GAP_DIST 1칸 만들기
+      elif (CS.out.vEgo * CV.MS_TO_KPH) < 10 : # 시속 10킬로 미만 GAP_DIST 1칸 만들기
         self.cruise_gap_auto_switch_timer += 1
         if self.cruise_gap_auto_switch_timer > 25 and CS.cruiseGapSet != 1.0 :
           can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
