@@ -194,7 +194,7 @@ void draw_date_time(UIState *s) {
     nvgStroke(s->vg);
 
   nvgFontSize(s->vg, 34);
-    nvgFontFace(s->vg, "sans-semibold");
+    nvgFontFace(s->vg, "sans-bold");
     nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
     nvgText(s->vg,rect_x+229,rect_y+57,now,NULL);
 }
@@ -224,6 +224,7 @@ static void screen_draw_button(UIState *s) {
     nvgStroke(s->vg);
 
     nvgFontSize(s->vg, 45);
+    nvgFontFace(s->vg, "sans-semibold");
 
     if (captureState == CAPTURE_STATE_CAPTURING) {
       NVGcolor fillColor = nvgRGBA(255,0,0,150);
