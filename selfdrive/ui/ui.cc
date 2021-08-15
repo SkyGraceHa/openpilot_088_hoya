@@ -423,6 +423,8 @@ static void update_status(UIState *s) {
       s->scene.scr.autoScreenOff = std::stoi(params.get("OpkrAutoScreenOff"));
       s->scene.brightness_off = std::stoi(params.get("OpkrUIBrightnessOff"));
       s->scene.cameraOffset = std::stoi(params.get("CameraOffsetAdj"));
+      s->scene.pathOffset = std::stoi(params.get("PathOffsetAdj"));
+      s->scene.osteerRateCost = std::stoi(params.get("SteerRateCostAdj"));
       s->scene.pidKp = std::stoi(params.get("PidKp"));
       s->scene.pidKi = std::stoi(params.get("PidKi"));
       s->scene.pidKd = std::stoi(params.get("PidKd"));
@@ -448,6 +450,7 @@ static void update_status(UIState *s) {
         s->scene.scr.nTime = -1;
       }
       s->scene.comma_stock_ui = params.getBool("CommaStockUI");
+      s->scene.opkr_livetune_ui = params.getBool("OpkrLiveTunePanelEnable");
       s->scene.apks_enabled = params.getBool("OpkrApksEnable");
       s->scene.batt_less = params.getBool("OpkrBattLess");
     } else {

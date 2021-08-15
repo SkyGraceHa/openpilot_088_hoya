@@ -73,6 +73,7 @@ def manager_init():
     ("PidKd", "150"),
     ("PidKf", "7"),
     ("CameraOffsetAdj", "60"),
+    ("PathOffsetAdj", "0"),
     ("SteerRatioAdj", "1550"),
     ("SteerRatioMaxAdj", "1750"),
     ("SteerActuatorDelayAdj", "20"),
@@ -152,6 +153,7 @@ def manager_init():
     ("AutoEnableSpeed", "3"),
     ("SafetyCamDecelDistGain", "0"),
     ("OpkrLiveTunePanelEnable", "0"),
+    ("RadarLongHelper", "1"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

@@ -138,6 +138,7 @@ class CarController():
     self.mad_mode_enabled = self.params.get_bool("MadModeEnabled")
     self.ldws_fix = self.params.get_bool("LdwsCarFix")
     self.apks_enabled = self.params.get_bool("OpkrApksEnable")
+    self.radar_helper_enabled = self.params.get_bool("RadarLongHelper")
 
     self.steer_mode = ""
     self.mdps_status = ""
@@ -406,7 +407,7 @@ class CarController():
 
     # 차간거리를 주행속도에 맞춰 변환하기
     if CS.acc_active and not CS.out.gasPressed and not CS.out.brakePressed:
-      if (CS.out.vEgo * CV.MS_TO_KPH) >= 60: # 시속 60킬로 이상 GAP_DIST 4칸 유지
+      if (CS.out.vEgo * CV.MS_TO_KPH) >= 80: # 시속 80킬로 이상 GAP_DIST 4칸 유지
         self.cruise_gap_auto_switch_timer += 1
         if self.cruise_gap_auto_switch_timer > 25 and (CS.cruiseGapSet != 4.0) :
           can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
@@ -414,7 +415,7 @@ class CarController():
           self.cruise_gap_auto_switch_timer = 0
         if CS.cruiseGapSet == 4.0:
           self.cruise_gap_auto_switch_timer = 0
-      elif (CS.out.vEgo * CV.MS_TO_KPH) >= 30 :# 시속 30킬로 이상 GAP_DIST 3칸 만들기
+      elif (CS.out.vEgo * CV.MS_TO_KPH) >= 20 :# 시속 20킬로 이상 GAP_DIST 3칸 만들기
         self.cruise_gap_auto_switch_timer += 1
         if self.cruise_gap_auto_switch_timer > 25 and (CS.cruiseGapSet != 3.0) :
           can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
@@ -422,24 +423,25 @@ class CarController():
           self.cruise_gap_auto_switch_timer = 0
         if CS.cruiseGapSet == 3.0:
           self.cruise_gap_auto_switch_timer = 0          
-      elif (CS.out.vEgo * CV.MS_TO_KPH) >= 10 :# 시속 10킬로 이상 GAP_DIST 2칸 만들기
-        self.cruise_gap_auto_switch_timer += 1
-        if self.cruise_gap_auto_switch_timer > 25 and (CS.cruiseGapSet != 2.0) :
-          can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
-            else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
-          self.cruise_gap_auto_switch_timer = 0
-        if CS.cruiseGapSet == 2.0:
-          self.cruise_gap_auto_switch_timer = 0          
-      elif (CS.out.vEgo * CV.MS_TO_KPH) < 10 : # 시속 10킬로 미만 GAP_DIST 1칸 만들기
-        self.cruise_gap_auto_switch_timer += 1
-        if self.cruise_gap_auto_switch_timer > 25 and CS.cruiseGapSet != 1.0 :
-          can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
-            else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
-          self.cruise_gap_auto_switch_timer = 0
-        if CS.cruiseGapSet == 1.0:
-          self.cruise_gap_auto_switch_timer = 0
+      # elif (CS.out.vEgo * CV.MS_TO_KPH) >= 10 :# 시속 10킬로 이상 GAP_DIST 2칸 만들기
+      #   self.cruise_gap_auto_switch_timer += 1
+      #   if self.cruise_gap_auto_switch_timer > 25 and (CS.cruiseGapSet != 2.0) :
+      #     can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+      #       else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
+      #     self.cruise_gap_auto_switch_timer = 0
+      #   if CS.cruiseGapSet == 2.0:
+      #     self.cruise_gap_auto_switch_timer = 0          
+      # elif (CS.out.vEgo * CV.MS_TO_KPH) < 10 : # 시속 10킬로 미만 GAP_DIST 1칸 만들기
+      #   self.cruise_gap_auto_switch_timer += 1
+      #   if self.cruise_gap_auto_switch_timer > 25 and CS.cruiseGapSet != 1.0 :
+      #     can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
+      #       else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
+      #     self.cruise_gap_auto_switch_timer = 0
+      #   if CS.cruiseGapSet == 1.0:
+      #     self.cruise_gap_auto_switch_timer = 0
       else:
-        pass
+        self.cruise_gap_auto_switch_timer += 1 
+        # pass
     if CS.out.cruiseState.standstill:
       self.standstill_status = 1
       if self.opkr_autoresume:
@@ -583,7 +585,8 @@ class CarController():
         self.fca11alivecnt = self.fca11maxcnt - self.fca11inc
         lead_objspd = CS.lead_objspd  # vRel (km/h)
         aReqValue = CS.scc12["aReqValue"]
-        if 0 < CS.out.radarDistance <= 149:
+        if 0 < CS.out.radarDistance <= 149 and self.radar_helper_enabled:
+          # neokii's logic, opkr mod
           if aReqValue > 0.:
             stock_weight = interp(CS.out.radarDistance, [3., 25.], [0.8, 0.])
           elif aReqValue < 0.:
@@ -594,6 +597,8 @@ class CarController():
           else:
             stock_weight = 0.
           apply_accel = apply_accel * (1. - stock_weight) + aReqValue * stock_weight
+        elif 0 < CS.out.radarDistance <= 3: # use radar by force to stop anyway at 3m
+          apply_accel = aReqValue
         else:
           stock_weight = 0.
         can_sends.append(create_scc11(self.packer, frame, set_speed, lead_visible, self.scc_live, lead_dist, lead_vrel, lead_yrel, 
@@ -632,6 +637,7 @@ class CarController():
     self.cc_timer += 1
     if self.cc_timer > 100:
       self.cc_timer = 0
+      self.radar_helper_enabled = self.params.get_bool("RadarLongHelper")
       if self.params.get_bool("OpkrLiveTunePanelEnable"):
         if CS.CP.lateralTuning.which() == 'pid':
           self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.2f}/{:0.5f}'.format(float(Decimal(self.params.get("PidKp", encoding="utf8"))*Decimal('0.01')), \
