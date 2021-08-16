@@ -213,6 +213,7 @@ typedef struct UIScene {
   bool live_tune_panel_enable;
   bool kr_date_show;
   bool kr_time_show;
+  bool lead_custom;
   int live_tune_panel_list = 0;
   int list_count = 3;
 
