@@ -451,13 +451,13 @@ static void ui_draw_debug(UIState *s)
   
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 
-  if (s->nDebugUi1) {
+  if (scene.nDebugUi1) {
     ui_draw_text(s, 30, 1010-bdr_s, scene.alertTextMsg1.c_str(), 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
     ui_draw_text(s, 30, 1050-bdr_s, scene.alertTextMsg2.c_str(), 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
   }
 
   
-  nvgFillColor(s->vg, COLOR_WHITE_ALPHA(125));
+  nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
   if (scene.nDebugUi2) {
     //if (scene.gpsAccuracyUblox != 0.00) {
     //  nvgFontSize(s->vg, 34);
