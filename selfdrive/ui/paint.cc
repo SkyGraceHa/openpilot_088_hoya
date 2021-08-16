@@ -125,39 +125,6 @@ static void draw_lead(UIState *s, const cereal::ModelDataV2::LeadDataV3::Reader 
   }
 }
 
-static void draw_lead_radar(UIState *s, const cereal::RadarState::LeadData::Reader &lead_data, const vertex_data &vd) {
-  // Draw lead car indicator
-  auto [x, y] = vd;
-
-  float fillAlpha = 0;
-  float speedBuff = 10.;
-  float leadBuff = 40.;
-  float d_rel = lead_data.getDRel();
-  float v_rel = lead_data.getVRel();
-  if (d_rel < leadBuff) {
-    fillAlpha = 255*(1.0-(d_rel/leadBuff));
-    if (v_rel < 0) {
-      fillAlpha += 255*(-1*(v_rel/speedBuff));
-    }
-    fillAlpha = (int)(fmin(fillAlpha, 255));
-  }
-
-  float sz = std::clamp((25 * 30) / (d_rel / 3 + 30), 15.0f, 30.0f) * 2.35;
-  x = std::clamp(x, 0.f, s->fb_w - sz / 2);
-  y = std::fmin(s->fb_h - sz * .6, y);
-
-  NVGcolor color = COLOR_YELLOW;
-  if(lead_data.getRadar())
-    color = nvgRGBA(112, 128, 255, 255);
-
-  draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), color);
-
-  if(lead_data.getRadar()) {
-    nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-    ui_draw_text(s, x, y + sz/2.f, "R", 18 * 2.5, COLOR_WHITE, "sans-semibold");
-  }
-}
-
 static float lock_on_rotation[] = {0.f, 0.1f*NVG_PI, 0.3f*NVG_PI, 0.6f*NVG_PI, 1.0f*NVG_PI, 1.4f*NVG_PI, 1.7f*NVG_PI, 1.9f*NVG_PI, 2.0f*NVG_PI};
 
 static float lock_on_scale[] = {1.f, 1.05f, 1.1f, 1.15f, 1.2f, 1.15f, 1.1f, 1.05f, 1.f, 0.95f, 0.9f, 0.85f, 0.8f, 0.85f, 0.9f, 0.95f};
@@ -350,23 +317,24 @@ static void ui_draw_world(UIState *s) {
 
   // Draw lead indicators if openpilot is handling longitudinal
   //if (s->scene.longitudinal_control) {
-  if (true) {
-    auto lead_one = (*s->sm)["modelV2"].getModelV2().getLeadsV3()[0];
-    auto lead_two = (*s->sm)["modelV2"].getModelV2().getLeadsV3()[1];
+  auto radar_state = (*s->sm)["radarState"].getRadarState();
+  auto lead_radar = radar_state.getLeadOne();
+  auto lead_one = (*s->sm)["modelV2"].getModelV2().getLeadsV3()[0];
+  auto lead_two = (*s->sm)["modelV2"].getModelV2().getLeadsV3()[1];
+
+  if (s->scene.lead_custom) {
+    if (lead_radar.getStatus() && lead_radar.getRadar()) {
+        draw_lead_custom(s, lead_radar, s->scene.lead_vertices_radar[0]);
+    }
+    if (lead_two.getProb() > .5 && (std::abs(lead_one.getX()[0] - lead_two.getX()[0]) > 3.0)) {
+      draw_lead_custom(s, lead_two, s->scene.lead_vertices[1]);    
+  }
+  else {
     if (lead_one.getProb() > .5) {
       draw_lead(s, lead_one, s->scene.lead_vertices[0]);
     }
     if (lead_two.getProb() > .5 && (std::abs(lead_one.getX()[0] - lead_two.getX()[0]) > 3.0)) {
       draw_lead(s, lead_two, s->scene.lead_vertices[1]);
-    }
-
-    auto radar_state = (*s->sm)["radarState"].getRadarState();
-    auto lead_radar = radar_state.getLeadOne();
-    if (lead_radar.getStatus() && lead_radar.getRadar()) {
-      if (s->scene.lead_custom)
-        draw_lead_custom(s, lead_radar, s->scene.lead_vertices_radar[0]);
-      else
-        draw_lead_radar(s, lead_radar, s->scene.lead_vertices_radar[0]);
     }
   }
   nvgResetScissor(s->vg);
