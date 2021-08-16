@@ -495,6 +495,18 @@ public:
   }
 };
 
+class LeadCustomToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  LeadCustomToggle() : ToggleControl("선행차 인식 Custom 이미지 표시", "주행화면에 선행차 Custom 이미지를 표시합니다.", "../assets/offroad/icon_shell.png", Params().getBool("LeadCustom")) {
+    QObject::connect(this, &LeadCustomToggle::toggleFlipped, [=](int state) {
+      char value = state ? '1' : '0';
+      Params().put("LeadCustom", &value, 1);
+    });
+  }
+};
+
 class RadarLongHelperToggle : public ToggleControl {
   Q_OBJECT
 

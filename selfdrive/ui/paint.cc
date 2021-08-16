@@ -311,13 +311,13 @@ static void ui_draw_world(UIState *s) {
     auto lead_one = (*s->sm)["modelV2"].getModelV2().getLeadsV3()[0];
     auto lead_two = (*s->sm)["modelV2"].getModelV2().getLeadsV3()[1];
     if (lead_one.getProb() > .5) {
-      if (true) { //선택옵션 추가 필요
+      if (s->scene.lead_custom) { 
         draw_lead_custom(s, lead_one, s->scene.lead_vertices[0]);}
       else {
         draw_lead(s, lead_one, s->scene.lead_vertices[0]);}
     }
     if (lead_two.getProb() > .5 && (std::abs(lead_one.getX()[0] - lead_two.getX()[0]) > 3.0)) {
-      if (true) {
+      if (s->scene.lead_custom) {
         draw_lead_custom(s, lead_two, s->scene.lead_vertices[1]);}
       else {
         draw_lead(s, lead_two, s->scene.lead_vertices[1]);}
