@@ -339,7 +339,7 @@ static void ui_draw_world(UIState *s) {
   auto lead_two = (*s->sm)["modelV2"].getModelV2().getLeadsV3()[1];
 
   if (s->scene.lead_custom) {
-    if (lead_radar.getStatus() && lead_radar.getRadar()) {
+    if (lead_one.getProb() > .5) || (lead_radar.getStatus() && lead_radar.getRadar()) {
       draw_lead_custom(s, lead_radar, s->scene.lead_vertices_radar[0]);
     }
     if (lead_two.getProb() > .5 && (std::abs(lead_one.getX()[0] - lead_two.getX()[0]) > 3.0)) {
