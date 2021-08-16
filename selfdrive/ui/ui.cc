@@ -76,6 +76,15 @@ static void update_leads(UIState *s, const cereal::ModelDataV2::Reader &model) {
   }
 }
 
+static void update_leads_radar(UIState *s, const cereal::RadarState::Reader &radar_state, std::optional<cereal::ModelDataV2::XYZTData::Reader> line) {
+  auto lead_data = radar_state.getLeadOne();
+    if (lead_data.getStatus() && lead_data.getRadar()) {
+      float z = line ? (*line).getZ()[get_path_length_idx(*line, lead_data.getDRel())] : 0.0;
+      // negative because radarState uses left positive convention
+      calib_frame_to_full_frame(s, lead_data.getDRel(), -lead_data.getYRel(), z + 1.22, &s->scene.lead_vertices_radar[0]);
+    }
+}
+
 static void update_line_data(const UIState *s, const cereal::ModelDataV2::XYZTData::Reader &line,
                              float y_off, float z_off, line_vertices_data *pvd, int max_idx) {
   const auto line_x = line.getX(), line_y = line.getY(), line_z = line.getZ();
@@ -247,10 +256,41 @@ static void update_state(UIState *s) {
   if (sm.updated("gpsLocationExternal")) {
     scene.gpsAccuracy = sm["gpsLocationExternal"].getGpsLocationExternal().getAccuracy();
   }
+  if (sm.updated("radarState") && s->vg) {
+    std::optional<cereal::ModelDataV2::XYZTData::Reader> line;
+    if (sm.rcv_frame("modelV2") > 0) {
+      line = sm["modelV2"].getModelV2().getPosition();
+    }
+    update_leads_radar(s, sm["radarState"].getRadarState(), line);
+  }  
   if (sm.updated("carParams")) {
     scene.longitudinal_control = sm["carParams"].getCarParams().getOpenpilotLongitudinalControl();
     scene.steerMax_V = sm["carParams"].getCarParams().getSteerMaxV()[0];
     scene.steer_actuator_delay = sm["carParams"].getCarParams().getSteerActuatorDelay();
+  }
+  if (sm.updated("lateralPlan")) {
+    scene.lateral_plan = sm["lateralPlan"].getLateralPlan();
+    auto data = sm["lateralPlan"].getLateralPlan();
+
+    scene.lateralPlan.laneWidth = data.getLaneWidth();
+    scene.lateralPlan.dProb = data.getDProb();
+    scene.lateralPlan.lProb = data.getLProb();
+    scene.lateralPlan.rProb = data.getRProb();
+    scene.lateralPlan.steerRateCost = data.getSteerRateCost();
+    scene.lateralPlan.standstillElapsedTime = data.getStandstillElapsedTime();
+    scene.lateralPlan.lanelessModeStatus = data.getLanelessMode();
+  }
+  // opkr
+  if (sm.updated("liveMapData")) {
+    scene.live_map_data = sm["liveMapData"].getLiveMapData();
+    auto data = sm["liveMapData"].getLiveMapData();
+
+    scene.liveMapData.opkrspeedlimit = data.getSpeedLimit();
+    scene.liveMapData.opkrspeedlimitdist = data.getSpeedLimitDistance();
+    scene.liveMapData.opkrspeedsign = data.getSafetySign();
+    scene.liveMapData.opkrcurveangle = data.getRoadCurvature();
+    scene.liveMapData.opkrturninfo = data.getTurnInfo();
+    scene.liveMapData.opkrdisttoturn = data.getDistanceToTurn();
   }
   if (sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
@@ -291,30 +331,6 @@ static void update_state(UIState *s) {
   }
   scene.started = sm["deviceState"].getDeviceState().getStarted();
   //scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
-  if (sm.updated("lateralPlan")) {
-    scene.lateral_plan = sm["lateralPlan"].getLateralPlan();
-    auto data = sm["lateralPlan"].getLateralPlan();
-
-    scene.lateralPlan.laneWidth = data.getLaneWidth();
-    scene.lateralPlan.dProb = data.getDProb();
-    scene.lateralPlan.lProb = data.getLProb();
-    scene.lateralPlan.rProb = data.getRProb();
-    scene.lateralPlan.steerRateCost = data.getSteerRateCost();
-    scene.lateralPlan.standstillElapsedTime = data.getStandstillElapsedTime();
-    scene.lateralPlan.lanelessModeStatus = data.getLanelessMode();
-  }
-  // opkr
-  if (sm.updated("liveMapData")) {
-    scene.live_map_data = sm["liveMapData"].getLiveMapData();
-    auto data = sm["liveMapData"].getLiveMapData();
-
-    scene.liveMapData.opkrspeedlimit = data.getSpeedLimit();
-    scene.liveMapData.opkrspeedlimitdist = data.getSpeedLimitDistance();
-    scene.liveMapData.opkrspeedsign = data.getSafetySign();
-    scene.liveMapData.opkrcurveangle = data.getRoadCurvature();
-    scene.liveMapData.opkrturninfo = data.getTurnInfo();
-    scene.liveMapData.opkrdisttoturn = data.getDistanceToTurn();
-  }
 }
 
 static void update_params(UIState *s) {
@@ -439,6 +455,7 @@ static void update_status(UIState *s) {
       s->scene.live_tune_panel_enable = params.getBool("OpkrLiveTunePanelEnable");
       s->scene.kr_date_show = params.getBool("KRDateShow");
       s->scene.kr_time_show = params.getBool("KRTimeShow");
+      s->scene.lead_custom = params.getBool("LeadCustom");
 
       if (s->scene.scr.autoScreenOff > 0) {
         s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * UI_FREQ;
@@ -465,7 +482,7 @@ QUIState::QUIState(QObject *parent) : QObject(parent) {
   ui_state.sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "deviceState", "roadCameraState",
     "pandaState", "carParams", "driverMonitoringState", "sensorEvents", "carState", "liveLocationKalman",
-    "ubloxGnss", "gpsLocationExternal", "liveParameters", "lateralPlan", "liveMapData",
+    "ubloxGnss", "gpsLocationExternal", "radarState", "liveParameters", "lateralPlan", "liveMapData",
   });
 
   ui_state.fb_w = vwp_w;
@@ -496,7 +513,7 @@ void QUIState::update() {
   update_vision(&ui_state);
   dashcam(&ui_state);
 
-  if (ui_state.scene.started != started_prev) {
+  if (ui_state.scene.started != started_prev || ui_state.sm->frame == 1) {
     started_prev = ui_state.scene.started;
     emit offroadTransition(!ui_state.scene.started);
 

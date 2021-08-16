@@ -6,6 +6,8 @@
 #include "selfdrive/hardware/hw.h"
 #include "selfdrive/ui/qt/widgets/controls.h"
 #include "selfdrive/ui/ui.h" // opkr
+#include <QComboBox>
+#include <QAbstractItemView>
 
 // SSH enable toggle
 class SshToggle : public ToggleControl {
@@ -493,6 +495,18 @@ public:
   }
 };
 
+class LeadCustomToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  LeadCustomToggle() : ToggleControl("선행차 인식 Custom 이미지 표시", "주행화면에 선행차 Custom 이미지를 표시합니다.", "../assets/offroad/icon_shell.png", Params().getBool("LeadCustom")) {
+    QObject::connect(this, &LeadCustomToggle::toggleFlipped, [=](int state) {
+      char value = state ? '1' : '0';
+      Params().put("LeadCustom", &value, 1);
+    });
+  }
+};
+
 class RadarLongHelperToggle : public ToggleControl {
   Q_OBJECT
 
@@ -501,6 +515,30 @@ public:
     QObject::connect(this, &RadarLongHelperToggle::toggleFlipped, [=](int state) {
       char value = state ? '1' : '0';
       Params().put("RadarLongHelper", &value, 1);
+    });
+  }
+};
+
+class FCATypeToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  FCATypeToggle() : ToggleControl("FCA11 사용(전방추돌관련)", "전방 추돌 신호를 SCC12 대신 FCA11을 사용합니다. 인게이지 혹은 부팅시 전방충돌오류가 날 때 사용합니다.", "../assets/offroad/icon_shell.png", Params().getBool("FCAType")) {
+    QObject::connect(this, &FCATypeToggle::toggleFlipped, [=](int state) {
+      char value = state ? '1' : '0';
+      Params().put("FCAType", &value, 1);
+    });
+  }
+};
+
+class LongTypeToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+  LongTypeToggle() : ToggleControl("FCA 코드 미사용(캔오류관련)", "롱컨트롤(개조) 사용시 FCA코드를 생성하지 않습니다. 롱컨트롤 사용시 캔오류 혹은 크루즈 오류가 날 경우 기능을 켜봅니다.", "../assets/offroad/icon_shell.png", Params().getBool("LongControlType")) {
+    QObject::connect(this, &LongTypeToggle::toggleFlipped, [=](int state) {
+      char value = state ? '1' : '0';
+      Params().put("LongControlType", &value, 1);
     });
   }
 };
@@ -535,19 +573,19 @@ private:
   void refresh(QString carname);
 };
 
-class CarForceSet : public AbstractControl {
+class CarSelectCombo : public AbstractControl 
+{
   Q_OBJECT
 
 public:
-  CarForceSet();
+  CarSelectCombo();
 
 private:
-  QPushButton btnc;
-  QString carname;
-  //QLabel carname_label;
+  QPushButton btn;
+  QComboBox combobox;
   Params params;
-  
-  void refreshc();
+
+  void refresh();
 };
 
 

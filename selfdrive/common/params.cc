@@ -342,7 +342,10 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"OpkrLiveTunePanelEnable", PERSISTENT},
     {"KRDateShow", PERSISTENT},
     {"KRTimeShow", PERSISTENT},
+    {"LeadCustom", PERSISTENT},    
     {"RadarLongHelper", PERSISTENT},
+    {"LongControlType", PERSISTENT},
+    {"FCAType", PERSISTENT},
 };
 
 } // namespace

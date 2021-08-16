@@ -197,7 +197,7 @@ typedef struct UIScene {
   bool forceGearD;
   bool comma_stock_ui, opkr_livetune_ui;
   bool apks_enabled;
-  bool is_OpenpilotViewEnabled;
+  bool is_OpenpilotViewEnabled = false;
   bool driving_record;
   float steer_actuator_delay;
   bool batt_less;
@@ -213,6 +213,7 @@ typedef struct UIScene {
   bool live_tune_panel_enable;
   bool kr_date_show;
   bool kr_time_show;
+  bool lead_custom;
   int live_tune_panel_list = 0;
   int list_count = 3;
 
@@ -238,6 +239,7 @@ typedef struct UIScene {
   bool dm_active, engageable;
 
   // lead
+  vertex_data lead_vertices_radar[2];  
   vertex_data lead_vertices[2];
 
   float light_sensor, accel_sensor, gyro_sensor, accel_sensor2;
