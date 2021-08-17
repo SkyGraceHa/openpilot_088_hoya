@@ -329,7 +329,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CruiseGap3", PERSISTENT},
     {"CruiseGap4", PERSISTENT},
     {"DynamicTR", PERSISTENT},
-    {"OpkrSpeedBump", CLEAR_ON_MANAGER_START},
     {"OpkrBattLess", PERSISTENT},
     {"LCTimingFactorUD", PERSISTENT},
     {"LCTimingFactor30", PERSISTENT},
@@ -345,6 +344,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"LeadCustom", PERSISTENT},    
     {"RadarLongHelper", PERSISTENT},
     {"FCAType", PERSISTENT},
+    {"GitPullOnBoot", PERSISTENT},
 };
 
 } // namespace

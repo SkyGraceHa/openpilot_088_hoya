@@ -288,6 +288,10 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : QWidget(parent) {
 
   main_layout->addWidget(horizontal_line());
 
+  main_layout->addWidget(new GitPullOnBootToggle());
+
+  main_layout->addWidget(horizontal_line());
+
   // preset1 buttons
   QHBoxLayout *presetone_layout = new QHBoxLayout();
   presetone_layout->setSpacing(50);
