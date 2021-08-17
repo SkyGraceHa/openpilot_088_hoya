@@ -136,7 +136,6 @@ def manager_init():
     ("WhitePandaSupport", "0"),
     ("SteerWarningFix", "0"),
     ("OpkrRunNaviOnBoot", "0"),
-    ("OpkrApksEnable", "0"),
     ("CruiseGap1", "10"),
     ("CruiseGap2", "12"),
     ("CruiseGap3", "15"),
@@ -156,6 +155,7 @@ def manager_init():
     ("RadarLongHelper", "1"),
     ("FCAType", "0"),
     ("GitPullOnBoot", "0"),
+    ("LiveSteerRatioPercent", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
@@ -175,7 +175,7 @@ def manager_init():
   if params.get("Passive") is None:
     raise Exception("Passive must be set to continue")
 
-  if EON and params.get_bool("OpkrApksEnable"):
+  if EON:
     update_apks(show_spinner=True)
 
   os.umask(0)  # Make sure we can create files with 777 permissions
@@ -217,7 +217,7 @@ def manager_init():
     crash.init()
 
   # ensure shared libraries are readable by apks
-  if EON and params.get_bool("OpkrApksEnable"):
+  if EON:
     os.chmod(BASEDIR, 0o755)
     os.chmod("/dev/shm", 0o777)
     os.chmod(os.path.join(BASEDIR, "cereal"), 0o755)
@@ -235,7 +235,7 @@ def manager_prepare():
 
 
 def manager_cleanup():
-  if EON and Params().get_bool("OpkrApksEnable"):
+  if EON:
     pm_apply_packages('disable')
 
   for p in managed_processes.values():
@@ -261,7 +261,7 @@ def manager_thread():
   if os.getenv("BLOCK") is not None:
     ignore += os.getenv("BLOCK").split(",")
 
-  if EON and params.get_bool("OpkrApksEnable"):
+  if EON:
     pm_apply_packages('enable')
 
   ensure_running(managed_processes.values(), started=False, not_run=ignore)

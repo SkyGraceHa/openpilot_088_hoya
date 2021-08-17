@@ -448,18 +448,6 @@ public:
   }
 };
 
-class ApksEnableToggle : public ToggleControl {
-  Q_OBJECT
-
-public:
-  ApksEnableToggle() : ToggleControl("APKs 사용", "어플 사용을 위해 apk환경을 활성화합니다. 활성화시 apk 파일들(소프트키, 맵피, 믹스플로러 등)이 자동 인스톨 됩니다.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrApksEnable")) {
-    QObject::connect(this, &ApksEnableToggle::toggleFlipped, [=](int state) {
-      bool status = state ? true : false;
-      Params().putBool("OpkrApksEnable", status);
-    });
-  }
-};
-
 class BattLessToggle : public ToggleControl {
   Q_OBJECT
 
@@ -1630,6 +1618,21 @@ class CamDecelDistAdd : public AbstractControl {
 
 public:
   CamDecelDistAdd();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+  
+  void refresh();
+};
+
+class LiveSRPercent : public AbstractControl {
+  Q_OBJECT
+
+public:
+  LiveSRPercent();
 
 private:
   QPushButton btnplus;
