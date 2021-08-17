@@ -85,5 +85,5 @@ public:
     std::string result = get( key );
     ret_code = std::stoi( result );
     return ret_code;
-  } s  
+  }
 };
