@@ -18,6 +18,13 @@ public:
 
   static void reboot() { std::system("sudo reboot"); };
   static void poweroff() { std::system("sudo poweroff"); };
+  static void set_battery_charging(int on)  {
+    std::ofstream battery_charging_control("/sys/class/power_supply/battery/charging_enabled");
+    if (battery_charging_control.is_open()) {
+      battery_charging_control << (on ? "1" : "0") << "\n";
+      battery_charging_control.close();
+    }
+  }  
   static void set_brightness(int percent) {
     std::ofstream brightness_control("/sys/class/backlight/panel0-backlight/brightness");
     if (brightness_control.is_open()) {

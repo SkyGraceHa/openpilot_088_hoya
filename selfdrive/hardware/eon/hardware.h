@@ -22,6 +22,13 @@ public:
 
   static void reboot() { std::system("reboot"); };
   static void poweroff() { std::system("LD_LIBRARY_PATH= svc power shutdown"); };
+  static void set_battery_charging(int on)  {
+    std::ofstream battery_charging_control("/sys/class/power_supply/battery/charging_enabled");
+    if (battery_charging_control.is_open()) {
+      battery_charging_control << (on ? "1" : "0") << "\n";
+      battery_charging_control.close();
+    }
+  }  
   static void set_brightness(int percent) {
     std::ofstream brightness_control("/sys/class/leds/lcd-backlight/brightness");
     if (brightness_control.is_open()) {

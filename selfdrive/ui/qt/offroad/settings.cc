@@ -221,6 +221,8 @@ DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
   power_layout->addWidget(poweroff_btn);
   QObject::connect(poweroff_btn, &QPushButton::clicked, [=]() {
     if (ConfirmationDialog::confirm("전원을 끄시겠습니까?", this)) {
+      Hardware::set_battery_charging(false);
+      sleep(20);      
       Hardware::poweroff();
     }
   });

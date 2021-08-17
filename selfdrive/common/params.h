@@ -78,4 +78,12 @@ public:
   inline int putBool(const std::string &key, bool val) {
     return putBool(key.c_str(), val);
   }
+
+  inline int getInt( const char *key )
+  {
+    int   ret_code = 0;
+    std::string result = get( key );
+    ret_code = std::stoi( result );
+    return ret_code;
+  } s  
 };
