@@ -165,18 +165,30 @@ static void draw_side_lead_custom(UIState *s, const cereal::ModelDataV2::LeadDat
     float d_rel = lead_data.getX()[0];
     float sz = std::clamp((25 * 30) / (d_rel / 3 + 30), 15.0f, 30.0f) * 2.35;
     x = std::clamp(x, 0.f, s->fb_w - sz / 2);
+
+    if(d_rel < 30) {
+      const float c = 0.7f;
+      float r = d_rel * ((1.f - c) / 30.f) + c;
+      if(r > 0.f)
+        y = y * r;
+    }
+
     y = std::fmin(s->fb_h - sz * .6, y);
+    y = std::fmin(s->fb_h * 0.8f, y);
+
     float img_alpha = 1.0f;
     const char* image = "custom_lead_vision";
     if(s->sm->frame % 2 == 0) {
         s->lock_on_anim_index++;
     }
+
     int img_size = 80;
     if(d_rel < 100) {
         img_size = (int)(-2/5 * d_rel + 120);
     }
+
     nvgSave(s->vg);
-    nvgTranslate(s->vg, x, y);
+    nvgTranslate(s->vg, x, y);    
     float scale = lock_on_scale[s->lock_on_anim_index % 8];
     nvgScale(s->vg, scale, scale);
     ui_draw_image(s, {-(img_size / 2), -(img_size / 2), img_size, img_size}, image, img_alpha);
