@@ -201,55 +201,6 @@ static void ui_draw_line(UIState *s, const line_vertices_data &vd, NVGcolor *col
   nvgFill(s->vg);
 }
 
-//Atom(Conan)'s colored track, some codes come from Hoya
-static void ui_draw_track(UIState *s, const line_vertices_data &vd) 
-{
-  const UIScene &scene = s->scene;    
-  if (vd.cnt == 0) return;
-
-  nvgBeginPath(s->vg);
-  nvgMoveTo(s->vg, vd.v[0].x, vd.v[0].y);
-  for (int i=1; i<vd.cnt; i++) {
-    nvgLineTo(s->vg, vd.v[i].x, vd.v[i].y);
-  }
-  nvgClosePath(s->vg);
-
-  int steerOverride = s->scene.car_state.getSteeringPressed();
-  int torque_scale = 0;
-  int red_lvl = 0;
-  int green_lvl = 0;
-  float steer_max_v = s->scene.steerMax_V - (1.5 * (s->scene.steerMax_V - 0.9));  
-
-  NVGpaint track_bg;
-  if (s->scene.controls_state.getEnabled() && !s->scene.comma_stock_ui) {
-    if (steerOverride) {
-      track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h*.4,
-        COLOR_BLACK_ALPHA(80), COLOR_BLACK_ALPHA(20));
-    } else if (!scene.lateralPlan.lanelessModeStatus) {
-        if (fabs(s->scene.output_scale) > 0.90) {
-          torque_scale = (int)fabs(255*(float)s->scene.output_scale*steer_max_v);
-          red_lvl = fmin(255, torque_scale);
-          green_lvl = fmin(255, 255-torque_scale);
-        } else{
-          red_lvl = 0;
-          green_lvl = 200;          
-        }
-        track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h*.4,
-          nvgRGBA(red_lvl, green_lvl, 0, 250), nvgRGBA(red_lvl, green_lvl, 0, 50));
-    } else { // differentiate laneless mode color (Grace blue)
-      track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h * .4,
-          nvgRGBA(0, 100, 255, 250), nvgRGBA(0, 100, 255, 50));
-    }
-  } else {
-    // Draw white vision track
-    track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h * .4,
-                                COLOR_WHITE_ALPHA(150), COLOR_WHITE_ALPHA(100));
-  }
-  
-  nvgFillPaint(s->vg, track_bg);
-  nvgFill(s->vg);  
-}
-
 static void draw_vision_frame(UIState *s) {
   glBindVertexArray(s->frame_vao);
   mat4 *out_mat = &s->rear_frame_mat;
@@ -310,8 +261,20 @@ static void ui_draw_vision_lane_lines(UIState *s) {
       ui_draw_line(s, scene.road_edge_vertices[i], &color, nullptr);
     }
   }
+  if (scene.controls_state.getEnabled() && !scene.comma_stock_ui) {
+    if (steerOverride) {
+      track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h*.4,
+        COLOR_BLACK_ALPHA(80), COLOR_BLACK_ALPHA(20));
+    } else {
+      track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h*.4,
+        nvgRGBA(red_lvl, green_lvl, 0, 150), nvgRGBA((int)(0.7*red_lvl), (int)(0.7*green_lvl), 0, 20));
+    }
+  } else {
+    // Draw white vision track
+    track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h * .4,
+                                        COLOR_WHITE_ALPHA(150), COLOR_WHITE_ALPHA(20));
+  }
   // paint path
-  ui_draw_track(s, scene.track_vertices);  
   ui_draw_line(s, scene.track_vertices, nullptr, &track_bg);
 }
 
