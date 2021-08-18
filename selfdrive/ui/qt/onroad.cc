@@ -59,7 +59,7 @@ void OnroadWindow::updateState(const UIState &s) {
     } else if ((nanos_since_boot() - sm.rcv_time("controlsState")) / 1e9 > CONTROLS_TIMEOUT) {
       // car is started, but controls is lagging or died
       bgColor = bg_colors[STATUS_ALERT];
-      alerts->updateAlert(CONTROLS_UNRESPONSIVE_ALERT, bgColor);
+      if (!s.scene.is_OpenpilotViewEnabled) alerts->updateAlert(CONTROLS_UNRESPONSIVE_ALERT, bgColor);
     }
   }
   if (bg != bgColor) {

@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <string>  //opkr
+#include <iostream>
 
 #include <cassert>
 #include <cmath>
@@ -14,7 +15,6 @@
 #include "selfdrive/hardware/hw.h"
 #include "selfdrive/ui/paint.h"
 #include "selfdrive/ui/qt/qt_window.h"
-#include "dashcam.h"
 
 #define BACKLIGHT_DT 0.05
 #define BACKLIGHT_TS 10.00
@@ -148,7 +148,7 @@ static void update_state(UIState *s) {
     scene.dm_active = sm["driverMonitoringState"].getDriverMonitoringState().getIsActiveMode();
   }
 
-  if (scene.started && sm.updated("controlsState")) {
+  if (sm.updated("controlsState")) {
     scene.controls_state = sm["controlsState"].getControlsState();
     scene.lateralControlMethod = scene.controls_state.getLateralControlMethod();
     if (scene.lateralControlMethod == 0) {
@@ -171,39 +171,39 @@ static void update_state(UIState *s) {
   }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();
-    auto data = sm["carState"].getCarState();
+    auto cs_data = sm["carState"].getCarState();
     auto cruiseState = scene.car_state.getCruiseState();
-    scene.scr.awake = cruiseState.getCruiseSwState();
+    scene.awake = cruiseState.getCruiseSwState();
 
-    if(scene.leftBlinker!=data.getLeftBlinker() || scene.rightBlinker!=data.getRightBlinker()){
+    if (scene.leftBlinker!=cs_data.getLeftBlinker() || scene.rightBlinker!=cs_data.getRightBlinker()) {
       scene.blinker_blinkingrate = 120;
     }
-    scene.brakePress = data.getBrakePressed();
-    scene.brakeLights = data.getBrakeLights();
-    scene.getGearShifter = data.getGearShifter();
-    scene.leftBlinker = data.getLeftBlinker();
-    scene.rightBlinker = data.getRightBlinker();
-    scene.leftblindspot = data.getLeftBlindspot();
-    scene.rightblindspot = data.getRightBlindspot();
-    scene.tpmsPressureFl = data.getTpmsPressureFl();
-    scene.tpmsPressureFr = data.getTpmsPressureFr();
-    scene.tpmsPressureRl = data.getTpmsPressureRl();
-    scene.tpmsPressureRr = data.getTpmsPressureRr();
-    scene.radarDistance = data.getRadarDistance();
-    scene.standStill = data.getStandStill();
-    scene.vSetDis = data.getVSetDis();
-    scene.cruiseAccStatus = data.getCruiseAccStatus();
-    scene.angleSteers = data.getSteeringAngleDeg();
-    scene.cruise_gap = data.getCruiseGapSet();
+    scene.brakePress = cs_data.getBrakePressed();
+    scene.brakeLights = cs_data.getBrakeLights();
+    scene.getGearShifter = cs_data.getGearShifter();
+    scene.leftBlinker = cs_data.getLeftBlinker();
+    scene.rightBlinker = cs_data.getRightBlinker();
+    scene.leftblindspot = cs_data.getLeftBlindspot();
+    scene.rightblindspot = cs_data.getRightBlindspot();
+    scene.tpmsPressureFl = cs_data.getTpmsPressureFl();
+    scene.tpmsPressureFr = cs_data.getTpmsPressureFr();
+    scene.tpmsPressureRl = cs_data.getTpmsPressureRl();
+    scene.tpmsPressureRr = cs_data.getTpmsPressureRr();
+    scene.radarDistance = cs_data.getRadarDistance();
+    scene.standStill = cs_data.getStandStill();
+    scene.vSetDis = cs_data.getVSetDis();
+    scene.cruiseAccStatus = cs_data.getCruiseAccStatus();
+    scene.angleSteers = cs_data.getSteeringAngleDeg();
+    scene.cruise_gap = cs_data.getCruiseGapSet();
   }
 
   if (sm.updated("liveParameters")) {
     //scene.liveParams = sm["liveParameters"].getLiveParameters();
-    auto data = sm["liveParameters"].getLiveParameters();
-    scene.liveParams.angleOffset = data.getAngleOffsetDeg();
-    scene.liveParams.angleOffsetAverage = data.getAngleOffsetAverageDeg();
-    scene.liveParams.stiffnessFactor = data.getStiffnessFactor();
-    scene.liveParams.steerRatio = data.getSteerRatio();
+    auto live_data = sm["liveParameters"].getLiveParameters();
+    scene.liveParams.angleOffset = live_data.getAngleOffsetDeg();
+    scene.liveParams.angleOffsetAverage = live_data.getAngleOffsetAverageDeg();
+    scene.liveParams.stiffnessFactor = live_data.getStiffnessFactor();
+    scene.liveParams.steerRatio = live_data.getSteerRatio();
   }
   if (sm.updated("modelV2") && s->vg) {
     auto model = sm["modelV2"].getModelV2();
@@ -229,12 +229,12 @@ static void update_state(UIState *s) {
   }
   if (sm.updated("deviceState")) {
     scene.deviceState = sm["deviceState"].getDeviceState();
-    s->scene.cpuPerc = scene.deviceState.getCpuUsagePercent();
-    s->scene.cpuTemp = (scene.deviceState.getCpuTempC()[0] + scene.deviceState.getCpuTempC()[1] + scene.deviceState.getCpuTempC()[2] + scene.deviceState.getCpuTempC()[3])/4;
-    s->scene.batTemp = scene.deviceState.getBatteryTempC();
-    s->scene.ambientTemp = scene.deviceState.getAmbientTempC();
-    s->scene.fanSpeed = scene.deviceState.getFanSpeedPercentDesired();
-    s->scene.batPercent = scene.deviceState.getBatteryPercent();
+    scene.cpuPerc = scene.deviceState.getCpuUsagePercent();
+    scene.cpuTemp = (scene.deviceState.getCpuTempC()[0] + scene.deviceState.getCpuTempC()[1] + scene.deviceState.getCpuTempC()[2] + scene.deviceState.getCpuTempC()[3])/4;
+    scene.batTemp = scene.deviceState.getBatteryTempC();
+    scene.ambientTemp = scene.deviceState.getAmbientTempC();
+    scene.fanSpeed = scene.deviceState.getFanSpeedPercentDesired();
+    scene.batPercent = scene.deviceState.getBatteryPercent();
   }
   if (sm.updated("pandaState")) {
     auto pandaState = sm["pandaState"].getPandaState();
@@ -244,17 +244,17 @@ static void update_state(UIState *s) {
     scene.pandaType = cereal::PandaState::PandaType::UNKNOWN;
   }
   if (sm.updated("ubloxGnss")) {
-    auto data = sm["ubloxGnss"].getUbloxGnss();
-    if (data.which() == cereal::UbloxGnss::MEASUREMENT_REPORT) {
-      scene.satelliteCount = data.getMeasurementReport().getNumMeas();
+    auto ub_data = sm["ubloxGnss"].getUbloxGnss();
+    if (ub_data.which() == cereal::UbloxGnss::MEASUREMENT_REPORT) {
+      scene.satelliteCount = ub_data.getMeasurementReport().getNumMeas();
     }
-    auto data2 = sm["gpsLocationExternal"].getGpsLocationExternal();
-      scene.gpsAccuracyUblox = data2.getAccuracy();
-      scene.altitudeUblox = data2.getAltitude();
-      scene.bearingUblox = data2.getBearingDeg();
   }
   if (sm.updated("gpsLocationExternal")) {
     scene.gpsAccuracy = sm["gpsLocationExternal"].getGpsLocationExternal().getAccuracy();
+    auto ge_data = sm["gpsLocationExternal"].getGpsLocationExternal();
+    scene.gpsAccuracyUblox = ge_data.getAccuracy();
+    scene.altitudeUblox = ge_data.getAltitude();
+    scene.bearingUblox = ge_data.getBearingDeg();
   }
   if (sm.updated("radarState") && s->vg) {
     std::optional<cereal::ModelDataV2::XYZTData::Reader> line;
@@ -270,27 +270,25 @@ static void update_state(UIState *s) {
   }
   if (sm.updated("lateralPlan")) {
     scene.lateral_plan = sm["lateralPlan"].getLateralPlan();
-    auto data = sm["lateralPlan"].getLateralPlan();
-
-    scene.lateralPlan.laneWidth = data.getLaneWidth();
-    scene.lateralPlan.dProb = data.getDProb();
-    scene.lateralPlan.lProb = data.getLProb();
-    scene.lateralPlan.rProb = data.getRProb();
-    scene.lateralPlan.steerRateCost = data.getSteerRateCost();
-    scene.lateralPlan.standstillElapsedTime = data.getStandstillElapsedTime();
-    scene.lateralPlan.lanelessModeStatus = data.getLanelessMode();
+    auto lp_data = sm["lateralPlan"].getLateralPlan();
+    scene.lateralPlan.laneWidth = lp_data.getLaneWidth();
+    scene.lateralPlan.dProb = lp_data.getDProb();
+    scene.lateralPlan.lProb = lp_data.getLProb();
+    scene.lateralPlan.rProb = lp_data.getRProb();
+    scene.lateralPlan.steerRateCost = lp_data.getSteerRateCost();
+    scene.lateralPlan.standstillElapsedTime = lp_data.getStandstillElapsedTime();
+    scene.lateralPlan.lanelessModeStatus = lp_data.getLanelessMode();
   }
   // opkr
   if (sm.updated("liveMapData")) {
     scene.live_map_data = sm["liveMapData"].getLiveMapData();
-    auto data = sm["liveMapData"].getLiveMapData();
-
-    scene.liveMapData.opkrspeedlimit = data.getSpeedLimit();
-    scene.liveMapData.opkrspeedlimitdist = data.getSpeedLimitDistance();
-    scene.liveMapData.opkrspeedsign = data.getSafetySign();
-    scene.liveMapData.opkrcurveangle = data.getRoadCurvature();
-    scene.liveMapData.opkrturninfo = data.getTurnInfo();
-    scene.liveMapData.opkrdisttoturn = data.getDistanceToTurn();
+    auto lm_data = sm["liveMapData"].getLiveMapData();
+    scene.liveMapData.opkrspeedlimit = lm_data.getSpeedLimit();
+    scene.liveMapData.opkrspeedlimitdist = lm_data.getSpeedLimitDistance();
+    scene.liveMapData.opkrspeedsign = lm_data.getSafetySign();
+    scene.liveMapData.opkrcurveangle = lm_data.getRoadCurvature();
+    scene.liveMapData.opkrturninfo = lm_data.getTurnInfo();
+    scene.liveMapData.opkrdisttoturn = lm_data.getDistanceToTurn();
   }
   if (sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
@@ -303,12 +301,6 @@ static void update_state(UIState *s) {
         auto gyro = sensor.getGyroUncalibrated().getV();
         if (gyro.totalSize().wordCount) {
           scene.gyro_sensor = gyro[1];
-        }
-      } else if (scene.started && sensor.which() == cereal::SensorEventData::ACCELERATION) {
-        auto accel2 = sensor.getAcceleration().getV();
-        scene.accel_sensor2 = accel2[2];
-        if ((scene.accel_sensor2 < -1) && Params().getBool("OpkrSpeedBump")) {
-          Params().putBool("OpkrSpeedBump", false);
         }
       }
     }
@@ -329,8 +321,11 @@ static void update_state(UIState *s) {
 
     scene.light_sensor = std::clamp<float>(1.0 - (ev / max_ev), 0.0, 1.0);
   }
-  scene.started = sm["deviceState"].getDeviceState().getStarted();
-  //scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+  if (!scene.is_OpenpilotViewEnabled) {
+    scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+  } else {
+    scene.started = sm["deviceState"].getDeviceState().getStarted();
+  }
 }
 
 static void update_params(UIState *s) {
@@ -350,7 +345,7 @@ static void update_params(UIState *s) {
       scene.map_on_overlay = false;
       params.putBool("OpkrMapEnable", true);
       system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity");
-    } else if (frame - scene.started_frame > 15*UI_FREQ) {
+    } else if (frame - scene.started_frame > 20*UI_FREQ) {
       scene.navi_on_boot = true;
     }
   }
@@ -360,9 +355,67 @@ static void update_params(UIState *s) {
       scene.map_on_top = false;
       scene.map_on_overlay = true;
       system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
-    } else if (frame - scene.started_frame > 15*UI_FREQ) {
+    } else if (frame - scene.started_frame > 20*UI_FREQ) {
       scene.move_to_background = true;
     }
+  }
+  if (!scene.auto_gitpull && (frame - scene.started_frame > 15*UI_FREQ)) {
+    if (params.getBool("GitPullOnBoot")) {
+      scene.auto_gitpull = true;
+      system("/data/openpilot/gitpull.sh");
+    } else if (frame - scene.started_frame > 20*UI_FREQ) {
+      scene.auto_gitpull = true;
+    }
+  }
+
+  if (!scene.read_params_once) {
+    scene.end_to_end = params.getBool("EndToEndToggle");
+    scene.driving_record = params.getBool("OpkrDrivingRecord");
+    scene.nDebugUi1 = params.getBool("DebugUi1");
+    scene.nDebugUi2 = params.getBool("DebugUi2");
+    scene.forceGearD = params.getBool("JustDoGearD");
+    scene.nOpkrBlindSpotDetect = params.getBool("OpkrBlindSpotDetect");
+    scene.laneless_mode = std::stoi(params.get("LanelessMode"));
+    scene.recording_count = std::stoi(params.get("RecordingCount"));
+    scene.recording_quality = std::stoi(params.get("RecordingQuality"));
+    scene.speed_lim_off = std::stoi(params.get("OpkrSpeedLimitOffset"));
+    scene.monitoring_mode = params.getBool("OpkrMonitoringMode");
+    scene.brightness = std::stoi(params.get("OpkrUIBrightness"));
+    scene.nVolumeBoost = std::stoi(params.get("OpkrUIVolumeBoost"));
+    scene.autoScreenOff = std::stoi(params.get("OpkrAutoScreenOff"));
+    scene.brightness_off = std::stoi(params.get("OpkrUIBrightnessOff"));
+    scene.cameraOffset = std::stoi(params.get("CameraOffsetAdj"));
+    scene.pathOffset = std::stoi(params.get("PathOffsetAdj"));
+    scene.osteerRateCost = std::stoi(params.get("SteerRateCostAdj"));
+    scene.pidKp = std::stoi(params.get("PidKp"));
+    scene.pidKi = std::stoi(params.get("PidKi"));
+    scene.pidKd = std::stoi(params.get("PidKd"));
+    scene.pidKf = std::stoi(params.get("PidKf"));
+    scene.indiInnerLoopGain = std::stoi(params.get("InnerLoopGain"));
+    scene.indiOuterLoopGain = std::stoi(params.get("OuterLoopGain"));
+    scene.indiTimeConstant = std::stoi(params.get("TimeConstant"));
+    scene.indiActuatorEffectiveness = std::stoi(params.get("ActuatorEffectiveness"));
+    scene.lqrScale = std::stoi(params.get("Scale"));
+    scene.lqrKi = std::stoi(params.get("LqrKi"));
+    scene.lqrDcGain = std::stoi(params.get("DcGain"));
+    scene.live_tune_panel_enable = params.getBool("OpkrLiveTunePanelEnable");
+    scene.kr_date_show = params.getBool("KRDateShow");
+    scene.kr_time_show = params.getBool("KRTimeShow");
+    scene.lead_custom = params.getBool("LeadCustom");    
+
+    if (scene.autoScreenOff > 0) {
+      scene.nTime = scene.autoScreenOff * 60 * UI_FREQ;
+    } else if (scene.autoScreenOff == 0) {
+      scene.nTime = 30 * UI_FREQ;
+    } else if (scene.autoScreenOff == -1) {
+      scene.nTime = 15 * UI_FREQ;
+    } else {
+      scene.nTime = -1;
+    }
+    scene.comma_stock_ui = params.getBool("CommaStockUI");
+    scene.opkr_livetune_ui = params.getBool("OpkrLiveTunePanelEnable");
+    scene.batt_less = params.getBool("OpkrBattLess");
+    scene.read_params_once = true;
   }
 }
 
@@ -406,11 +459,10 @@ static void update_status(UIState *s) {
   static bool started_prev = false;
   if (s->scene.started != started_prev) {
     if (s->scene.started) {
-      Params params;
       s->status = STATUS_DISENGAGED;
       s->scene.started_frame = s->sm->frame;
 
-      s->wide_camera = Hardware::TICI() ? params.getBool("EnableWideCamera") : false;
+      s->wide_camera = Hardware::TICI() ? Params().getBool("EnableWideCamera") : false;
 
       // Update intrinsics matrix after possible wide camera toggle change
       if (s->vg) {
@@ -423,53 +475,6 @@ static void update_status(UIState *s) {
       } else {
         s->vipc_client = s->vipc_client_rear;
       }
-      s->scene.end_to_end = params.getBool("EndToEndToggle");
-      s->scene.driving_record = params.getBool("OpkrDrivingRecord");
-      s->nDebugUi1 = params.getBool("DebugUi1");
-      s->nDebugUi2 = params.getBool("DebugUi2");
-      s->scene.forceGearD = params.getBool("JustDoGearD");
-      s->nOpkrBlindSpotDetect = params.getBool("OpkrBlindSpotDetect");
-      s->scene.laneless_mode = std::stoi(params.get("LanelessMode"));
-      s->scene.recording_count = std::stoi(params.get("RecordingCount"));
-      s->scene.recording_quality = std::stoi(params.get("RecordingQuality"));
-      s->scene.speed_lim_off = std::stoi(params.get("OpkrSpeedLimitOffset"));
-      s->scene.monitoring_mode = params.getBool("OpkrMonitoringMode");
-      s->scene.scr.brightness = std::stoi(params.get("OpkrUIBrightness"));
-      s->scene.scr.nVolumeBoost = std::stoi(params.get("OpkrUIVolumeBoost"));
-      s->scene.scr.autoScreenOff = std::stoi(params.get("OpkrAutoScreenOff"));
-      s->scene.brightness_off = std::stoi(params.get("OpkrUIBrightnessOff"));
-      s->scene.cameraOffset = std::stoi(params.get("CameraOffsetAdj"));
-      s->scene.pathOffset = std::stoi(params.get("PathOffsetAdj"));
-      s->scene.osteerRateCost = std::stoi(params.get("SteerRateCostAdj"));
-      s->scene.pidKp = std::stoi(params.get("PidKp"));
-      s->scene.pidKi = std::stoi(params.get("PidKi"));
-      s->scene.pidKd = std::stoi(params.get("PidKd"));
-      s->scene.pidKf = std::stoi(params.get("PidKf"));
-      s->scene.indiInnerLoopGain = std::stoi(params.get("InnerLoopGain"));
-      s->scene.indiOuterLoopGain = std::stoi(params.get("OuterLoopGain"));
-      s->scene.indiTimeConstant = std::stoi(params.get("TimeConstant"));
-      s->scene.indiActuatorEffectiveness = std::stoi(params.get("ActuatorEffectiveness"));
-      s->scene.lqrScale = std::stoi(params.get("Scale"));
-      s->scene.lqrKi = std::stoi(params.get("LqrKi"));
-      s->scene.lqrDcGain = std::stoi(params.get("DcGain"));
-      s->scene.live_tune_panel_enable = params.getBool("OpkrLiveTunePanelEnable");
-      s->scene.kr_date_show = params.getBool("KRDateShow");
-      s->scene.kr_time_show = params.getBool("KRTimeShow");
-      s->scene.lead_custom = params.getBool("LeadCustom");
-
-      if (s->scene.scr.autoScreenOff > 0) {
-        s->scene.scr.nTime = s->scene.scr.autoScreenOff * 60 * UI_FREQ;
-      } else if (s->scene.scr.autoScreenOff == 0) {
-        s->scene.scr.nTime = 30 * UI_FREQ;
-      } else if (s->scene.scr.autoScreenOff == -1) {
-        s->scene.scr.nTime = 15 * UI_FREQ;
-      } else {
-        s->scene.scr.nTime = -1;
-      }
-      s->scene.comma_stock_ui = params.getBool("CommaStockUI");
-      s->scene.opkr_livetune_ui = params.getBool("OpkrLiveTunePanelEnable");
-      s->scene.apks_enabled = params.getBool("OpkrApksEnable");
-      s->scene.batt_less = params.getBool("OpkrBattLess");
     } else {
       s->vipc_client->connected = false;
     }
@@ -511,7 +516,6 @@ void QUIState::update() {
   update_state(&ui_state);
   update_status(&ui_state);
   update_vision(&ui_state);
-  dashcam(&ui_state);
 
   if (ui_state.scene.started != started_prev || ui_state.sm->frame == 1) {
     started_prev = ui_state.scene.started;
@@ -566,26 +570,26 @@ void Device::updateBrightness(const UIState &s) {
 
   if (!s.scene.started) {
     clipped_brightness = BACKLIGHT_OFFROAD;
-  } else if (s.scene.scr.autoScreenOff != -2 && s.scene.touched2) {
-    sleep_time = s.scene.scr.nTime;
-  } else if (s.scene.controls_state.getAlertSize() != cereal::ControlsState::AlertSize::NONE && s.scene.scr.autoScreenOff != -2) {
-    sleep_time = s.scene.scr.nTime;
-  } else if (sleep_time > 0 && s.scene.scr.autoScreenOff != -2) {
+  } else if (s.scene.autoScreenOff != -2 && s.scene.touched2) {
+    sleep_time = s.scene.nTime;
+  } else if (s.scene.controls_state.getAlertSize() != cereal::ControlsState::AlertSize::NONE && s.scene.autoScreenOff != -2) {
+    sleep_time = s.scene.nTime;
+  } else if (sleep_time > 0 && s.scene.autoScreenOff != -2) {
     sleep_time--;
-  } else if (s.scene.started && sleep_time == -1 && s.scene.scr.autoScreenOff != -2) {
-    sleep_time = s.scene.scr.nTime;
+  } else if (s.scene.started && sleep_time == -1 && s.scene.autoScreenOff != -2) {
+    sleep_time = s.scene.nTime;
   }
 
   int brightness = brightness_filter.update(clipped_brightness);
   if (!awake) {
     brightness = 0;
-  } else if (s.scene.started && sleep_time == 0 && s.scene.scr.autoScreenOff != -2) {
+  } else if (s.scene.started && sleep_time == 0 && s.scene.autoScreenOff != -2) {
     brightness = s.scene.brightness_off * 0.01 * brightness;
-  } else if( s.scene.scr.brightness ) {
-    brightness = s.scene.scr.brightness * 0.99;
+  } else if( s.scene.brightness ) {
+    brightness = s.scene.brightness * 0.99;
   }
 
-  //printf("sleep_time=%d  scr_off=%d  started=%d  brightness=%d\n", sleep_time, s.scene.scr.autoScreenOff, s.scene.started, brightness);
+  //printf("sleep_time=%d  scr_off=%d  started=%d  brightness=%d\n", sleep_time, s.scene.autoScreenOff, s.scene.started, brightness);
 
   if (brightness != last_brightness) {
     std::thread{Hardware::set_brightness, brightness}.detach();

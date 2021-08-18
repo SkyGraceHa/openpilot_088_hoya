@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <iostream>
 
 #include <QObject>
 #include <QTimer>
@@ -94,10 +95,10 @@ const Rect monitoring_btn = {50, 830, 140, 140};
 const Rect ml_btn = {1265, 905, 140, 140};
 const Rect stockui_btn = {15, 15, 184, 202};
 const Rect tuneui_btn = {1720, 15, 184, 202};
-const Rect livetunepanel_left_btn = {500, 750, 150, 160};
-const Rect livetunepanel_right_btn = {1270, 750, 150, 160};
-const Rect livetunepanel_left_above_btn = {500, 575, 150, 160};
-const Rect livetunepanel_right_above_btn = {1270, 575, 150, 160};
+const Rect livetunepanel_left_btn = {500, 750, 170, 160};
+const Rect livetunepanel_right_btn = {1250, 750, 170, 160};
+const Rect livetunepanel_left_above_btn = {500, 575, 170, 160};
+const Rect livetunepanel_right_above_btn = {1250, 575, 170, 160};
 
 const int UI_FREQ = 20;   // Hz
 
@@ -196,7 +197,6 @@ typedef struct UIScene {
   int homebtn_count = 0;
   bool forceGearD;
   bool comma_stock_ui, opkr_livetune_ui;
-  bool apks_enabled;
   bool is_OpenpilotViewEnabled = false;
   bool driving_record;
   float steer_actuator_delay;
@@ -205,7 +205,7 @@ typedef struct UIScene {
   int dynamic_tr_mode;
   float dynamic_tr_value;
   bool touched2 = false;
-  float brightness_off;
+  int brightness_off;
   int cameraOffset, pathOffset, osteerRateCost;
   int pidKp, pidKi, pidKd, pidKf;
   int indiInnerLoopGain, indiOuterLoopGain, indiTimeConstant, indiActuatorEffectiveness;
@@ -216,6 +216,14 @@ typedef struct UIScene {
   bool lead_custom;
   int live_tune_panel_list = 0;
   int list_count = 3;
+  int nTime, autoScreenOff, brightness, awake;
+  int nVolumeBoost = 0;
+  bool read_params_once = false;
+  bool nDebugUi1;
+  bool nDebugUi2;
+  bool nOpkrBlindSpotDetect;
+  bool auto_gitpull = false;
+  bool is_speed_over_limit = false;
 
   cereal::DeviceState::Reader deviceState;
   cereal::RadarState::LeadData::Reader lead_data[2];
@@ -242,21 +250,12 @@ typedef struct UIScene {
   vertex_data lead_vertices_radar[2];  
   vertex_data lead_vertices[2];
 
-  float light_sensor, accel_sensor, gyro_sensor, accel_sensor2;
+  float light_sensor, accel_sensor, gyro_sensor;
   bool started, ignition, is_metric, longitudinal_control, end_to_end;
   uint64_t started_frame;
 
 
   // atom
-  struct _screen
-  {
-     int  nTime;
-     int  autoScreenOff;
-     int  brightness;
-     int  nVolumeBoost = 0;
-     int  awake;
-  } scr;
-
   struct _LiveParams
   {
     float angleOffset;
@@ -318,11 +317,6 @@ typedef struct UIState {
   mat4 rear_frame_mat;
 
   bool awake;
-
-  bool is_speed_over_limit;
-  bool nDebugUi1;
-  bool nDebugUi2;
-  bool nOpkrBlindSpotDetect;
   bool sidebar_view;
 
   float car_space_transform[6];

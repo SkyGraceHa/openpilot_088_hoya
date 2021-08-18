@@ -221,6 +221,8 @@ DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
   power_layout->addWidget(poweroff_btn);
   QObject::connect(poweroff_btn, &QPushButton::clicked, [=]() {
     if (ConfirmationDialog::confirm("전원을 끄시겠습니까?", this)) {
+      Hardware::set_battery_charging(false);
+      sleep(20);      
       Hardware::poweroff();
     }
   });
@@ -285,6 +287,10 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : QWidget(parent) {
   connect(parent, SIGNAL(offroadTransition(bool)), uninstallBtn, SLOT(setEnabled(bool)));
 
   main_layout->addWidget(new GitHash());
+
+  main_layout->addWidget(horizontal_line());
+
+  main_layout->addWidget(new GitPullOnBootToggle());
 
   main_layout->addWidget(horizontal_line());
 
@@ -496,7 +502,6 @@ UserPanel::UserPanel(QWidget* parent) : QWidget(parent) {
   layout->addWidget(new MonitorEyesThreshold());
   layout->addWidget(new NormalEyesThreshold());
   layout->addWidget(new BlinkThreshold());
-  layout->addWidget(new ApksEnableToggle());
   layout->addWidget(new RunNaviOnBootToggle());
   layout->addWidget(new KRDateToggle());
   layout->addWidget(new KRTimeToggle());
@@ -583,6 +588,7 @@ TuningPanel::TuningPanel(QWidget* parent) : QWidget(parent) {
   layout->addWidget(new CameraOffset());
   layout->addWidget(new PathOffset());
   layout->addWidget(new LiveSteerRatioToggle());
+  layout->addWidget(new LiveSRPercent());
   layout->addWidget(new SRBaseControl());
   layout->addWidget(new SRMaxControl());
   layout->addWidget(new SteerActuatorDelay());

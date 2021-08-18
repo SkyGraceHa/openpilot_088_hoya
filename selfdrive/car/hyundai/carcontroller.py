@@ -136,7 +136,6 @@ class CarController():
     self.opkr_maxanglelimit = float(int(self.params.get("OpkrMaxAngleLimit", encoding="utf8")))
     self.mad_mode_enabled = self.params.get_bool("MadModeEnabled")
     self.ldws_fix = self.params.get_bool("LdwsCarFix")
-    self.apks_enabled = self.params.get_bool("OpkrApksEnable")
     self.radar_helper_enabled = self.params.get_bool("RadarLongHelper")
 
     self.steer_mode = ""
@@ -207,7 +206,7 @@ class CarController():
       self.str_log2 = 'T={:03.1f}/{:03.1f}/{:03.1f}/{:03.1f}'.format(CP.lateralTuning.indi.innerLoopGainV[0], CP.lateralTuning.indi.outerLoopGainV[0], \
        CP.lateralTuning.indi.timeConstantV[0], CP.lateralTuning.indi.actuatorEffectivenessV[0])
     elif CP.lateralTuning.which() == 'lqr':
-      self.str_log2 = 'T={:04.0f}/{:05.3f}/{:06.4f}'.format(CP.lateralTuning.lqr.scale, CP.lateralTuning.lqr.ki, CP.lateralTuning.lqr.dcGain)
+      self.str_log2 = 'T={:04.0f}/{:05.3f}/{:07.5f}'.format(CP.lateralTuning.lqr.scale, CP.lateralTuning.lqr.ki, CP.lateralTuning.lqr.dcGain)
 
     self.p = CarControllerParams
     self.sm = messaging.SubMaster(['controlsState'])
@@ -607,12 +606,8 @@ class CarController():
       self.scc11cnt = CS.scc11init["AliveCounterACC"]
 
     aq_value = CS.scc12["aReqValue"] if CS.CP.sccBus == 0 else apply_accel
-    if self.apks_enabled:
-      str_log1 = 'M/C={:03.0f}/{:03.0f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  AQ={:+04.2f}'.format(abs(self.model_speed), self.curve_speed, \
-       abs(new_steer), max(self.steerMax, abs(new_steer)), self.steerDeltaUp, self.steerDeltaDown, aq_value)
-    else:
-      str_log1 = 'M/C={:03.0f}/{:03.0f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  AQ={:+04.2f}  S={:.0f}/{:.0f}'.format(abs(self.model_speed), self.curve_speed, \
-       abs(new_steer), max(self.steerMax, abs(new_steer)), self.steerDeltaUp, self.steerDeltaDown, aq_value, int(CS.is_highway), CS.safety_sign_check)
+    str_log1 = 'M/C={:03.0f}/{:03.0f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  AQ={:+04.2f}  S={:.0f}/{:.0f}'.format(abs(self.model_speed), self.curve_speed,
+     abs(new_steer), max(self.steerMax, abs(new_steer)), self.steerDeltaUp, self.steerDeltaDown, aq_value, int(CS.is_highway), CS.safety_sign_check)
 
     self.cc_timer += 1
     if self.cc_timer > 100:
@@ -628,7 +623,7 @@ class CarController():
            float(Decimal(self.params.get("OuterLoopGain", encoding="utf8"))*Decimal('0.1')), float(Decimal(self.params.get("TimeConstant", encoding="utf8"))*Decimal('0.1')), \
            float(Decimal(self.params.get("ActuatorEffectiveness", encoding="utf8"))*Decimal('0.1')))
         elif CS.CP.lateralTuning.which() == 'lqr':
-          self.str_log2 = 'T={:04.0f}/{:05.3f}/{:06.4f}'.format(float(Decimal(self.params.get("Scale", encoding="utf8"))*Decimal('1.0')), \
+          self.str_log2 = 'T={:04.0f}/{:05.3f}/{:07.5f}'.format(float(Decimal(self.params.get("Scale", encoding="utf8"))*Decimal('1.0')), \
            float(Decimal(self.params.get("LqrKi", encoding="utf8"))*Decimal('0.001')), float(Decimal(self.params.get("DcGain", encoding="utf8"))*Decimal('0.00001')))
 
     trace1.printf1('{}  {}'.format(str_log1, self.str_log2))

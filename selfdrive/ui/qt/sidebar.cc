@@ -64,12 +64,7 @@ void Sidebar::mousePressEvent(QMouseEvent *event) {
       QUIState::ui_state.scene.homebtn_count = QUIState::ui_state.scene.homebtn_count + 1;
     if (QUIState::ui_state.scene.homebtn_count > 2) {
       QUIState::ui_state.scene.homebtn_count = 0;
-      bool apks_enable = Params().getBool("OpkrApksEnable");
-      if (apks_enable) {
-        QProcess::execute("/data/openpilot/run_mixplorer.sh");
-      } else {
-        if (ConfirmationDialog::alert("믹스플로러를 실행하기 위해서는 사용자설정에서 Apks 사용을 활성화해야 합니다(활성화 후 재부팅 필요)", this)) {}
-      }
+      QProcess::execute("/data/openpilot/run_mixplorer.sh");
     }
     return;
   }
@@ -81,10 +76,10 @@ void Sidebar::mousePressEvent(QMouseEvent *event) {
     //effect.setLoopCount(QSoundEffect::Infinite);
     //effect.setVolume(0.1);
     float volume = 0.5f;
-    if (QUIState::ui_state.scene.scr.nVolumeBoost < 0) {
+    if (QUIState::ui_state.scene.nVolumeBoost < 0) {
       volume = 0.0f;
-    } else if (QUIState::ui_state.scene.scr.nVolumeBoost > 1) {
-      volume = QUIState::ui_state.scene.scr.nVolumeBoost * 0.01;
+    } else if (QUIState::ui_state.scene.nVolumeBoost > 1) {
+      volume = QUIState::ui_state.scene.nVolumeBoost * 0.01;
     }
     effect.setVolume(volume);
     effect.play();
@@ -145,15 +140,14 @@ void Sidebar::updateState(const UIState &s) {
     iPAddress = QString::fromUtf8(m_strip.c_str());
     sSID = QString::fromUtf8(m_strssid.c_str());
   }
+  QString bATStatus = "DisCharging";
+  std::string m_battery_stat = s.scene.deviceState.getBatteryStatus();
+  bATStatus = QString::fromUtf8(m_battery_stat.c_str());
+
   setProperty("iPAddress", iPAddress);
   setProperty("sSID", sSID);
-
-  if (s.sm->updated("deviceState") || s.sm->updated("pandaState")) {
-    // atom
-    m_battery_img = s.scene.deviceState.getBatteryStatus() == "Charging" ? 1 : 0;
-    m_batteryPercent = s.scene.deviceState.getBatteryPercent();
-    repaint();
-  }
+  setProperty("bATStatus", bATStatus);
+  setProperty("bATPercent", (int)deviceState.getBatteryPercent());
 }
 
 void Sidebar::paintEvent(QPaintEvent *event) {
@@ -188,7 +182,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   drawMetric(p, "네트워크\n" + connect_str, "", connect_status, 716);
 
   // atom - ip
-  if( m_batteryPercent <= 1) return;
+  if( bat_Percent <= 1) return;
   const QRect r2 = QRect(35, 295, 230, 50);
   configFont(p, "Open Sans", 28, "Bold");
   p.setPen(Qt::yellow);
@@ -202,15 +196,15 @@ void Sidebar::paintEvent(QPaintEvent *event) {
 
   // atom - battery
   QRect  rect(160, 247, 76, 36);
-  QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * m_batteryPercent * 0.01), rect.height() - 11 );
+  QRect  bq(rect.left() + 6, rect.top() + 5, int((rect.width() - 19) * bat_Percent * 0.01), rect.height() - 11 );
   QBrush bgBrush("#149948");
-  p.fillRect(bq, bgBrush);  
-  p.drawImage(rect, battery_imgs[m_battery_img]);
+  p.fillRect(bq, bgBrush);
+  p.drawImage(rect, battery_imgs[bat_Status == "Charging" ? 1 : 0]);
 
   p.setPen(Qt::white);
   configFont(p, "Open Sans", 25, "Regular");
 
   char temp_value_str1[32];
-  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d%%", m_batteryPercent );
+  snprintf(temp_value_str1, sizeof(temp_value_str1), "%d%%", bat_Percent );
   p.drawText(rect, Qt::AlignCenter, temp_value_str1);
 }

@@ -13,6 +13,7 @@ public:
 
   static void reboot() {}
   static void poweroff() {}
+  static void set_battery_charging(int on) {}  
   static void set_brightness(int percent) {}
   static void set_display_power(bool on) {}
 
