@@ -310,20 +310,8 @@ static void ui_draw_vision_lane_lines(UIState *s) {
       ui_draw_line(s, scene.road_edge_vertices[i], &color, nullptr);
     }
   }
-  if (scene.controls_state.getEnabled() && !scene.comma_stock_ui) {
-    if (steerOverride) {
-      track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h*.4,
-        COLOR_BLACK_ALPHA(80), COLOR_BLACK_ALPHA(20));
-    } else {
-      track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h*.4,
-        nvgRGBA(red_lvl, green_lvl, 0, 150), nvgRGBA((int)(0.7*red_lvl), (int)(0.7*green_lvl), 0, 20));
-    }
-  } else {
-    // Draw white vision track
-    track_bg = nvgLinearGradient(s->vg, s->fb_w, s->fb_h, s->fb_w, s->fb_h * .4,
-                                        COLOR_WHITE_ALPHA(150), COLOR_WHITE_ALPHA(20));
-  }
   // paint path
+  ui_draw_track(s, scene.track_vertices);  
   ui_draw_line(s, scene.track_vertices, nullptr, &track_bg);
 }
 
