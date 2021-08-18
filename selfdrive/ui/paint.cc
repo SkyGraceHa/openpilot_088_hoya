@@ -22,8 +22,10 @@
 #include "selfdrive/hardware/hw.h"
 
 #include "selfdrive/ui/ui.h"
-#include  <time.h> // opkr
-#include  <string.h> // opkr
+#include <iostream>
+#include <time.h> // opkr
+#include <string> // opkr
+#include "selfdrive/ui/dashcam.h"
 
 static void ui_print(UIState *s, int x, int y,  const char* fmt, ... )
 {
@@ -989,10 +991,10 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
   //finally draw the frame
   bb_h += 20;
   nvgBeginPath(s->vg);
-    nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_h, 20);
-    nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
-    nvgStrokeWidth(s->vg, 6);
-    nvgStroke(s->vg);
+  nvgRoundedRect(s->vg, bb_x, bb_y, bb_w, bb_h, 20);
+  nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(80));
+  nvgStrokeWidth(s->vg, 6);
+  nvgStroke(s->vg);
 }
 
 static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w ) {
@@ -1501,7 +1503,7 @@ static void ui_draw_vision(UIState *s) {
   if (scene->live_tune_panel_enable) {
     ui_draw_live_tune_panel(s);
   }
-  if (scene->kr_date_show || scene->kr_time_show) {
+  if ((scene->kr_date_show || scene->kr_time_show) && !scene->comma_stock_ui) {
     draw_kr_date_time(s);
   }
 }
@@ -1519,6 +1521,7 @@ void ui_draw(UIState *s, int w, int h) {
   nvgBeginFrame(s->vg, s->fb_w, s->fb_h, 1.0f);
   if (draw_vision) {
     ui_draw_vision(s);
+    dashcam(s);
   }
   nvgEndFrame(s->vg);
   glDisable(GL_BLEND);

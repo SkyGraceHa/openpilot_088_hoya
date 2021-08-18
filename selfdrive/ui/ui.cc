@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <string>  //opkr
+#include <iostream>
 
 #include <cassert>
 #include <cmath>
@@ -14,7 +15,6 @@
 #include "selfdrive/hardware/hw.h"
 #include "selfdrive/ui/paint.h"
 #include "selfdrive/ui/qt/qt_window.h"
-#include "dashcam.h"
 
 #define BACKLIGHT_DT 0.05
 #define BACKLIGHT_TS 10.00
@@ -148,7 +148,7 @@ static void update_state(UIState *s) {
     scene.dm_active = sm["driverMonitoringState"].getDriverMonitoringState().getIsActiveMode();
   }
 
-  if (scene.started && sm.updated("controlsState")) {
+  if (sm.updated("controlsState")) {
     scene.controls_state = sm["controlsState"].getControlsState();
     scene.lateralControlMethod = scene.controls_state.getLateralControlMethod();
     if (scene.lateralControlMethod == 0) {
@@ -321,8 +321,11 @@ static void update_state(UIState *s) {
 
     scene.light_sensor = std::clamp<float>(1.0 - (ev / max_ev), 0.0, 1.0);
   }
-  scene.started = sm["deviceState"].getDeviceState().getStarted();
-  //scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+  if (!scene.is_OpenpilotViewEnabled) {
+    scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+  } else {
+    scene.started = sm["deviceState"].getDeviceState().getStarted();
+  }
 }
 
 static void update_params(UIState *s) {
@@ -513,7 +516,6 @@ void QUIState::update() {
   update_state(&ui_state);
   update_status(&ui_state);
   update_vision(&ui_state);
-  dashcam(&ui_state);
 
   if (ui_state.scene.started != started_prev || ui_state.sm->frame == 1) {
     started_prev = ui_state.scene.started;
