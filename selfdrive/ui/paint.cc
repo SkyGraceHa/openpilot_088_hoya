@@ -561,12 +561,12 @@ static void ui_draw_vision_scc_gap(UIState *s) {
   float lead_car_dist_bg_alpha = gap > 0 ? 0.0f : 0.0f;
   NVGcolor lead_car_dist_bg = nvgRGBA(0, 0, 0, (255 * lead_car_dist_bg_alpha));
   
-  if(gap <= 0) {ui_draw_circle_image(s, center_x, center_y, radius+15, "lead_car_dist_0", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 1) {ui_draw_circle_image(s, center_x, center_y, radius+15, "lead_car_dist_1", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 2) {ui_draw_circle_image(s, center_x, center_y, radius+15, "lead_car_dist_2", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 3) {ui_draw_circle_image(s, center_x, center_y, radius+15, "lead_car_dist_3", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 4) {ui_draw_circle_image(s, center_x, center_y, radius+15, "lead_car_dist_4", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else {ui_draw_circle_image(s, center_x, center_y, radius+15, "lead_car_dist_0", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  if(gap <= 0) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_0", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  else if (gap == 1) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_1", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  else if (gap == 2) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_2", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  else if (gap == 3) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_3", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  else if (gap == 4) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_4", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  else {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_0", lead_car_dist_bg, lead_car_dist_img_alpha);}
 }
 
 static void ui_draw_vision_brake(UIState *s) {
@@ -580,7 +580,7 @@ static void ui_draw_vision_brake(UIState *s) {
   float brake_img_alpha = brake_valid ? 1.0f : 0.15f;
   float brake_bg_alpha = brake_valid ? 0.3f : 0.1f;
   NVGcolor brake_bg = nvgRGBA(0, 0, 0, (255 * brake_bg_alpha));
-  ui_draw_circle_image(s, center_x, center_y, radius, "brake", brake_bg, brake_img_alpha);
+  ui_draw_circle_image_rotation(s, center_x, center_y, radius, "brake", brake_bg, brake_img_alpha);
 }
 
 static void ui_draw_vision_autohold(UIState *s) {
@@ -597,7 +597,7 @@ static void ui_draw_vision_autohold(UIState *s) {
   float brake_bg_alpha = autohold > 0 ? 0.3f : 0.1f;
   NVGcolor brake_bg = nvgRGBA(0, 0, 0, (255 * brake_bg_alpha));
 
-  ui_draw_circle_image(s, center_x, center_y, radius,
+  ui_draw_circle_image_rotation(s, center_x, center_y, radius,
         autohold > 1 ? "autohold_warning" : "autohold_active",
         brake_bg, brake_img_alpha);
 }
@@ -711,14 +711,14 @@ static void ui_draw_vision_cameradist(UIState *s) {
   NVGcolor box_line_color = COLOR_WHITE_ALPHA(100);
   NVGcolor text_color = COLOR_WHITE;
 
-  if (s->is_speed_over_limit) {
+  if (s->scene.is_speed_over_limit) {
       if (float(int(cameradist)/s->scene.liveMapData.opkrspeedlimit) < 3.0 ){// 잔여거리가 단속속도보다 3배 이내이면
         box_color = nvgRGBA(180, 0, 0, 200);      
       } 
       else {
         box_color = COLOR_OCHRE_ALPHA(200);
       }
-  } else if (s->scene.liveMapData.opkrspeedlimit > 29 && !s->is_speed_over_limit) {
+  } else if (s->scene.liveMapData.opkrspeedlimit > 29 && !s->scene.is_speed_over_limit) {
       box_color = nvgRGBA(0, 120, 0, 200);
   } else {
       box_color = COLOR_WHITE_ALPHA(0);
@@ -774,7 +774,7 @@ static void ui_draw_vision_speed(UIState *s) {
       nvgLineTo(s->vg, viz_speed_x - (viz_add*offset) - (viz_speed_w/2), (header_h/2.1));
       nvgLineTo(s->vg, viz_speed_x - (viz_add*offset)                  , (header_h/1.4));
       nvgClosePath(s->vg);
-      nvgFillColor(s->vg, nvgRGBA(255,100,0,(scene.linker_blinkingrate<=68 && scene.blinker_blinkingrate>=30)?180:0));
+      nvgFillColor(s->vg, nvgRGBA(255,100,0,(scene.blinker_blinkingrate<=68 && scene.blinker_blinkingrate>=30)?180:0));
       nvgFill(s->vg);
     }
     if(scene.rightBlinker) {
