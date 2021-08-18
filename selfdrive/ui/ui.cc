@@ -398,6 +398,7 @@ static void update_params(UIState *s) {
     scene.live_tune_panel_enable = params.getBool("OpkrLiveTunePanelEnable");
     scene.kr_date_show = params.getBool("KRDateShow");
     scene.kr_time_show = params.getBool("KRTimeShow");
+    scene.lead_custom = params.getBool("LeadCustom");    
 
     if (scene.autoScreenOff > 0) {
       scene.nTime = scene.autoScreenOff * 60 * UI_FREQ;
