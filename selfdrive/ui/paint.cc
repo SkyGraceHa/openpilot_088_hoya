@@ -280,6 +280,7 @@ static void ui_draw_vision_lane_lines(UIState *s) {
 
 // Draw all world space objects.
 static void ui_draw_world(UIState *s) {
+  const UIScene &scene = s->scene;
   nvgScissor(s->vg, 0, 0, s->fb_w, s->fb_h);
 
   // Draw lane edges and vision/mpc tracks
@@ -287,25 +288,26 @@ static void ui_draw_world(UIState *s) {
 
   // Draw lead indicators if openpilot is handling longitudinal
   //if (s->scene.longitudinal_control) {
-  auto radar_state = (*s->sm)["radarState"].getRadarState();
-  auto lead_radar = radar_state.getLeadOne();
+
   auto lead_one = (*s->sm)["modelV2"].getModelV2().getLeadsV3()[0];
   auto lead_two = (*s->sm)["modelV2"].getModelV2().getLeadsV3()[1];
+  auto radar_state = (*s->sm)["radarState"].getRadarState();
+  auto lead_radar = radar_state.getLeadOne();
 
-  if (s->scene.lead_custom) {
+  if (scene.lead_custom) {
     if ((lead_one.getProb() > .5) || (lead_radar.getStatus() && lead_radar.getRadar())) {
-      draw_lead_custom(s, lead_radar, s->scene.lead_vertices_radar[0]);
+      draw_lead_custom(s, lead_radar, scene.lead_vertices_radar[0]);
     }
     if (lead_two.getProb() > .5 && (std::abs(lead_one.getX()[0] - lead_two.getX()[0]) > 3.0)) {
-      draw_side_lead_custom(s, lead_two, s->scene.lead_vertices[1]);    
+      draw_side_lead_custom(s, lead_two, scene.lead_vertices[1]);    
     }
   }
   else {
     if (lead_one.getProb() > .5) {
-      draw_lead(s, lead_one, s->scene.lead_vertices[0]);
+      draw_lead(s, lead_one, scene.lead_vertices[0]);
     }
     if (lead_two.getProb() > .5 && (std::abs(lead_one.getX()[0] - lead_two.getX()[0]) > 3.0)) {
-      draw_lead(s, lead_two, s->scene.lead_vertices[1]);
+      draw_lead(s, lead_two, scene.lead_vertices[1]);
     }
   }
   nvgResetScissor(s->vg);
