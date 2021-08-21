@@ -213,7 +213,7 @@ static void screen_draw_button(UIState *s) {
     int btn_w = 140;
     int btn_h = 140;
     int btn_x = s->fb_w - btn_w - 35;
-    int btn_y = 1080 - btn_h - 35 - (btn_h / 2);
+    int btn_y = 1080 - btn_h - 35 - (btn_h / 2) - 10;
     int btn_xc = btn_x + (btn_w/2);
     int btn_yc = btn_y + (btn_h/2);
     nvgBeginPath(s->vg);
