@@ -300,7 +300,7 @@ static void ui_draw_world(UIState *s) {
   auto lead_radar = radar_state.getLeadOne();
 
   if (scene.lead_custom) {
-    if ((lead_one.getProb() > .5) || (lead_radar.getStatus() && lead_radar.getRadar())) {
+    if (lead_radar.getStatus() && lead_radar.getRadar()) {
       draw_lead_custom(s, lead_radar, scene.lead_vertices_radar[0]);
     }
     if (lead_two.getProb() > .5 && (std::abs(lead_one.getX()[0] - lead_two.getX()[0]) > 3.0)) {
@@ -422,12 +422,12 @@ static void ui_draw_debug(UIState *s) {
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 
   if (scene.nDebugUi1) {
-    ui_draw_text(s, 30, 1010-bdr_s, scene.alertTextMsg1.c_str(), 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
-    ui_draw_text(s, 30, 1050-bdr_s, scene.alertTextMsg2.c_str(), 50, COLOR_WHITE_ALPHA(200), "sans-semibold");
+    ui_draw_text(s, 30, 1010-bdr_s, scene.alertTextMsg1.c_str(), 45, COLOR_WHITE_ALPHA(150), "sans-semibold");
+    ui_draw_text(s, 30, 1050-bdr_s, scene.alertTextMsg2.c_str(), 45, COLOR_WHITE_ALPHA(150), "sans-semibold");
   }
 
   
-  nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
+  nvgFillColor(s->vg, COLOR_WHITE_ALPHA(150));
   if (scene.nDebugUi2) {
     //if (scene.gpsAccuracyUblox != 0.00) {
     //  nvgFontSize(s->vg, 34);
@@ -531,7 +531,7 @@ static void ui_draw_vision_brake(UIState *s) {
   const UIScene *scene = &s->scene;
 
   const int radius = 85;
-  const int center_x = radius + bdr_s + radius*2 + 20;
+  const int center_x = radius + bdr_s + radius*2 + 30;
   const int center_y = s->fb_h - footer_h + ((footer_h - radius) / 2);
 
   bool brake_valid = scene->car_state.getBrakeLights();
@@ -548,7 +548,7 @@ static void ui_draw_vision_autohold(UIState *s) {
     return;
 
   const int radius = 85;
-  const int center_x = radius + bdr_s + (radius*2 + 20) * 2;
+  const int center_x = radius + bdr_s + (radius*2 + 30) * 2;
   const int center_y = s->fb_h - footer_h + ((footer_h - radius) / 2);
 
   float brake_img_alpha = autohold > 0 ? 1.0f : 0.15f;
@@ -801,8 +801,11 @@ static void ui_draw_vision_event(UIState *s) {
 
   //draw compass by opkr and re-designed by hoya
   if (s->scene.gpsAccuracyUblox != 0.00 && !s->scene.comma_stock_ui) {
-    const int compass_x = s->fb_w - 167 - bdr_s;
-    const int compass_y = bdr_s + 713;
+    const int radius = 85;
+    const int compass_x = radius + bdr_s + (radius*2 + 30) * 4;
+    const int compass_y = s->fb_h - footer_h + ((footer_h - radius) / 2);
+    // const int compass_x = s->fb_w - 167 - bdr_s;
+    // const int compass_y = bdr_s + 713;
     const int direction_x = compass_x + 74;
     const int direction_y = compass_y + 74;
     ui_draw_circle_image_rotation(s, direction_x, direction_y - (bdr_s+7), 100, "direction", nvgRGBA(0x0, 0x0, 0x0, 0x0), 1.0f, -(s->scene.bearingUblox));
@@ -1170,8 +1173,8 @@ static void draw_navi_button(UIState *s) {
   if (s->vipc_client->connected || s->scene.is_OpenpilotViewEnabled) {
     int btn_w = 140;
     int btn_h = 140;
-    int btn_x1 = s->fb_w - btn_w - 355;
-    int btn_y = 1080 - btn_h - 35;
+    int btn_x1 = s->fb_w - btn_w - 355 - 10;
+    int btn_y = 1080 - btn_h - 35 - (btn_h / 2);
     int btn_xc1 = btn_x1 + (btn_w/2);
     int btn_yc = btn_y + (btn_h/2);
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
@@ -1195,8 +1198,8 @@ static void draw_laneless_button(UIState *s) {
   if (s->vipc_client->connected || s->scene.is_OpenpilotViewEnabled) {
     int btn_w = 140;
     int btn_h = 140;
-    int btn_x1 = s->fb_w - btn_w - 195;
-    int btn_y = 1080 - btn_h - 35;
+    int btn_x1 = s->fb_w - btn_w - 195 - 10;
+    int btn_y = 1080 - btn_h - 35 - (btn_h / 2);
     int btn_xc1 = btn_x1 + (btn_w/2);
     int btn_yc = btn_y + (btn_h/2);
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
@@ -1226,7 +1229,7 @@ static void draw_laneless_button(UIState *s) {
       nvgFill(s->vg);      
       nvgFillColor(s->vg, nvgRGBA(255,255,255,200));
       nvgText(s->vg,btn_xc1,btn_yc-20,"Lane",NULL);
-      nvgText(s->vg,btn_xc1,btn_yc+20,"less",NULL);      
+      nvgText(s->vg,btn_xc1,btn_yc+20,"-less",NULL);      
     } else if (s->scene.laneless_mode == 2) {
       nvgStrokeColor(s->vg, nvgRGBA(125,0,125,255));
       nvgStrokeWidth(s->vg, 6);
