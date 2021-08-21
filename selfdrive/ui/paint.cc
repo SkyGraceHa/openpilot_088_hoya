@@ -806,10 +806,12 @@ static void ui_draw_vision_event(UIState *s) {
     const int compass_y = s->fb_h - footer_h + ((footer_h - radius) / 2);
     // const int compass_x = s->fb_w - 167 - bdr_s;
     // const int compass_y = bdr_s + 713;
-    const int direction_x = compass_x + 74;
-    const int direction_y = compass_y + 74;
-    ui_draw_circle_image_rotation(s, direction_x, direction_y - (bdr_s+7), 100, "direction", nvgRGBA(0x0, 0x0, 0x0, 0x0), 1.0f, -(s->scene.bearingUblox));
-    ui_draw_image(s, {compass_x, compass_y, 150, 150}, "compass", 1.0f);
+    // const int direction_x = compass_x + 74;
+    // const int direction_y = compass_y + 74;
+    // ui_draw_circle_image_rotation(s, direction_x, direction_y - (bdr_s+7), 100, "direction", nvgRGBA(0x0, 0x0, 0x0, 0x0), 1.0f, -(s->scene.bearingUblox));
+    // ui_draw_image(s, {compass_x, compass_y, 150, 150}, "compass", 1.0f);
+    ui_draw_circle_image_rotation(s, compass_x, compass_y, radius, "direction", nvgRGBA(0x0, 0x0, 0x0, 0x0), 1.0f, -(s->scene.bearingUblox));
+    ui_draw_circle_image_rotation(s, compass_x, compass_y, radius, "compass", nvgRGBA(0x0, 0x0, 0x0, 0x0), 1.0f);
   }
 
   // draw steering wheel
@@ -1173,7 +1175,7 @@ static void draw_navi_button(UIState *s) {
   if (s->vipc_client->connected || s->scene.is_OpenpilotViewEnabled) {
     int btn_w = 140;
     int btn_h = 140;
-    int btn_x1 = s->fb_w - btn_w - 355 - 10;
+    int btn_x1 = s->fb_w - btn_w - 355 - 20;
     int btn_y = 1080 - btn_h - 35 - (btn_h / 2);
     int btn_xc1 = btn_x1 + (btn_w/2);
     int btn_yc = btn_y + (btn_h/2);
