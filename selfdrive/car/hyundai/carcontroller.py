@@ -98,7 +98,6 @@ class CarController():
     self.accel_lim_prev = 0.
     self.accel_lim = 0.
     self.lastresumeframe = 0
-    self.scc11cnt = self.scc12cnt = 0
     self.counter_init = False
 
     self.resume_cnt = 0
@@ -574,16 +573,22 @@ class CarController():
           # neokii's logic, opkr mod
           if aReqValue > 0.:
             stock_weight = interp(CS.out.radarDistance, [3., 25.], [0.8, 0.])
+          elif 3.5 < CS.out.radarDistance and aReqValue < 0. and CS.out.vEgo * CV.MS_TO_KPH <= 1.5 and not CS.out.cruiseState.standstill:
+            stock_weight = 0
+          elif 0 < CS.out.radarDistance <= 3.5:
+            stock_weight = interp(CS.out.radarDistance, [2.5, 3.5], [1., 0.])
+            apply_accel = apply_accel * (1. - stock_weight) + aReqValue * stock_weight
           elif aReqValue < 0.:
             stock_weight = interp(CS.out.radarDistance, [3., 25.], [1., 0.])
-            if lead_objspd < 0:
-              vRel_weight = interp(abs(lead_objspd), [0, 25], [1, 2])
-              stock_weight = interp(CS.out.radarDistance, [3. ** vRel_weight, 25. * vRel_weight], [1., 0.])
+            # if lead_objspd < 0:
+            #   vRel_weight = interp(abs(lead_objspd), [0, 25], [1, 2])
+            #   stock_weight = interp(CS.out.radarDistance, [3. ** vRel_weight, 25. * vRel_weight], [1., 0.])
           else:
             stock_weight = 0.
           apply_accel = apply_accel * (1. - stock_weight) + aReqValue * stock_weight
-        elif 0 < CS.out.radarDistance <= 3: # use radar by force to stop anyway at 3m
-          apply_accel = aReqValue
+        elif 0 < CS.out.radarDistance <= 4: # use radar by force to stop anyway below 4m
+          stock_weight = interp(CS.out.radarDistance, [3., 4.], [1., 0.])
+          apply_accel = apply_accel * (1. - stock_weight) + aReqValue * stock_weight
         else:
           stock_weight = 0.
         can_sends.append(create_scc11(self.packer, frame, set_speed, lead_visible, self.scc_live, lead_dist, lead_vrel, lead_yrel, 

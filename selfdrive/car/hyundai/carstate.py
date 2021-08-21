@@ -355,6 +355,9 @@ class CarState(CarStateBase):
       ("ESC_Off_Step", "TCS15", 0),
       ("AVH_LAMP", "TCS15", 0),
 
+      ("CF_Lvr_CruiseSet", "LVR12", 0),
+      ("CRUISE_LAMP_M", "EMS16", 0),
+
       ("MainMode_ACC", "SCC11", 1),
       ("SCCInfoDisplay", "SCC11", 0),
       ("AliveCounterACC", "SCC11", 0),
@@ -414,8 +417,6 @@ class CarState(CarStateBase):
       ("OPKR_S_Dist", "NAVI", 0),
       ("OPKR_S_Sign", "NAVI", 31),
       ("OPKR_SBR_Dist", "NAVI", 0),
-      ("CRUISE_LAMP_M", "EMS16", 0),
-      ("CF_Lvr_CruiseSet", "LVR12", 0),
     ]
 
     checks = [
@@ -441,6 +442,7 @@ class CarState(CarStateBase):
         ("CF_VSM_Warn", "FCA11", 0),
       ]
       checks += [("FCA11", 50)]
+
     if CP.mdpsBus == 0:
       signals += [
         ("CR_Mdps_StrColTq", "MDPS12", 0),
@@ -482,7 +484,7 @@ class CarState(CarStateBase):
         ]
       else:
         signals += [
-          ("Accel_Pedal_Pos", "E_EMS11", 0),
+          ("Accel_Pedal_Pos", "E_EMS11", 0)
         ]
       checks += [
         ("E_EMS11", 50),
@@ -633,27 +635,31 @@ class CarState(CarStateBase):
         ("ComfortBandLower", "SCC14", 0),
         ("ACCMode", "SCC14", 0),
         ("ObjGap", "SCC14", 0),
-        ("CF_VSM_Prefill", "FCA11", 0),
-        ("CF_VSM_HBACmd", "FCA11", 0),
-        ("CF_VSM_Warn", "FCA11", 0),
-        ("CF_VSM_BeltCmd", "FCA11", 0),
-        ("CR_VSM_DecCmd", "FCA11", 0),
-        ("FCA_Status", "FCA11", 2),
-        ("FCA_CmdAct", "FCA11", 0),
-        ("FCA_StopReq", "FCA11", 0),
-        ("FCA_DrvSetStatus", "FCA11", 1),
-        ("CF_VSM_DecCmdAct", "FCA11", 0),
-        ("FCA_Failinfo", "FCA11", 0),
-        ("FCA_RelativeVelocity", "FCA11", 0),
-        ("FCA_TimetoCollision", "FCA11", 2540.),
-        ("CR_FCA_Alive", "FCA11", 0),
-        ("CR_FCA_ChkSum", "FCA11", 0),
-        ("Supplemental_Counter", "FCA11", 0),
-        ("PAINT1_Status", "FCA11", 1),
       ]
       checks += [
         ("SCC11", 50),
         ("SCC12", 50),
       ]
+      if CP.fcaBus == 2:
+        signals += [
+          ("CF_VSM_Prefill", "FCA11", 0),
+          ("CF_VSM_HBACmd", "FCA11", 0),
+          ("CF_VSM_Warn", "FCA11", 0),
+          ("CF_VSM_BeltCmd", "FCA11", 0),
+          ("CR_VSM_DecCmd", "FCA11", 0),
+          ("FCA_Status", "FCA11", 2),
+          ("FCA_CmdAct", "FCA11", 0),
+          ("FCA_StopReq", "FCA11", 0),
+          ("FCA_DrvSetStatus", "FCA11", 1),
+          ("CF_VSM_DecCmdAct", "FCA11", 0),
+          ("FCA_Failinfo", "FCA11", 0),
+          ("FCA_RelativeVelocity", "FCA11", 0),
+          ("FCA_TimetoCollision", "FCA11", 2540.),
+          ("CR_FCA_Alive", "FCA11", 0),
+          ("CR_FCA_ChkSum", "FCA11", 0),
+          ("Supplemental_Counter", "FCA11", 0),
+          ("PAINT1_Status", "FCA11", 1),
+        ]
+        checks += [("FCA11", 50)]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2, enforce_checks=False)
