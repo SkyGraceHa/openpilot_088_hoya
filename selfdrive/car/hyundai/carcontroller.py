@@ -171,7 +171,8 @@ class CarController():
     self.cruise_gap_prev = 0
     self.cruise_gap_set_init = 0
     self.cruise_gap_switch_timer = 0
-    self.cruise_gap_auto_switch_timer = 0
+    self.cruise_gap_auto_switch_timer = 0    
+    self.cruise_gap_adjusting = False
     self.standstill_fault_reduce_timer = 0
     self.cruise_gap_prev2 = 0
     self.cruise_gap_switch_timer2 = 0
@@ -474,8 +475,10 @@ class CarController():
             can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
              else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
             self.cruise_gap_switch_timer = 0
+            self.cruise_gap_adjusting = True
         elif self.opkr_autoresume:
           self.standstill_fault_reduce_timer += 1
+          self.cruise_gap_adjusting = False
     # reset lead distnce after the car starts moving
     elif self.last_lead_distance != 0:
       self.last_lead_distance = 0
@@ -495,10 +498,16 @@ class CarController():
             can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
              else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
             self.cruise_gap_switch_timer = 0
+            self.cruise_gap_adjusting = True
         elif self.cruise_gap_prev == CS.cruiseGapSet and self.opkr_autoresume:
           self.cruise_gap_set_init = 0
           self.cruise_gap_prev = 0
-    
+          self.cruise_gap_adjusting = False
+        else:
+          self.cruise_gap_adjusting = False
+    else:
+      self.cruise_gap_adjusting = False
+
     if CS.cruise_buttons == 4:
       self.cancel_counter += 1
     elif CS.acc_active:
