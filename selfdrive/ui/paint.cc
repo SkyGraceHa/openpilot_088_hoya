@@ -813,8 +813,8 @@ static void ui_draw_vision_event(UIState *s) {
     // const int direction_y = compass_y + 74;
     // ui_draw_circle_image_rotation(s, direction_x, direction_y - (bdr_s+7), 100, "direction", nvgRGBA(0x0, 0x0, 0x0, 0x0), 1.0f, -(s->scene.bearingUblox));
     // ui_draw_image(s, {compass_x, compass_y, 150, 150}, "compass", 1.0f);
-    ui_draw_circle_image_rotation(s, compass_x, compass_y, radius + 20, "direction", nvgRGBA(0x0, 0x0, 0x0, 0x0), 0.8f, -(s->scene.bearingUblox));
-    ui_draw_circle_image_rotation(s, compass_x, compass_y, radius + 20, "compass", nvgRGBA(0x0, 0x0, 0x0, 0x0), 0.8f);
+    ui_draw_circle_image_rotation(s, compass_x, compass_y, radius + 40, "direction", nvgRGBA(0, 0, 0, 0), 0.7f, -(s->scene.bearingUblox));
+    ui_draw_circle_image_rotation(s, compass_x, compass_y, radius + 40, "compass", nvgRGBA(0, 0, 0, 0), 0.8f);
   }
 
   // draw steering wheel
