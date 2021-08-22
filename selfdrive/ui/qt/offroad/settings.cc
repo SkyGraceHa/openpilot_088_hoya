@@ -27,6 +27,7 @@
 #include "selfdrive/ui/ui.h"
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/qt/qt_window.h"
+#include "selfdrive/ui/qt/widgets/opkr.h"
 
 TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
   QVBoxLayout *main_layout = new QVBoxLayout(this);
