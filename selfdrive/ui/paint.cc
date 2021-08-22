@@ -667,7 +667,7 @@ static void ui_draw_vision_cameradist(UIState *s) {
   char str[64];
   snprintf(str, sizeof(str), "%.1f", (float)cameradistkm);
 
-  const Rect rect = {(bdr_s) + 2 * (184 + 15), int((bdr_s)) + 180, 200, 100};   
+  const Rect rect = {(bdr_s) + 2 * (184 + 15), int((bdr_s)) + 200, 200, 100};
   NVGcolor box_color = COLOR_WHITE;
   NVGcolor box_line_color = COLOR_WHITE_ALPHA(100);
   NVGcolor text_color = COLOR_WHITE;
@@ -693,16 +693,16 @@ static void ui_draw_vision_cameradist(UIState *s) {
 
   if (s->scene.liveMapData.opkrspeedlimitdist > 1000){
     //const std::string cameradist_str = std::to_string((int)std::nearbyint(cameradist));
-    ui_draw_text(s, rect.centerX() - 20, int(bdr_s)+255, str, 40 * 2.0, text_color, "sans-bold");
-    ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+260, "km", 30 * 1.6, text_color, "sans-semibold");
+    ui_draw_text(s, rect.centerX() - 20, int(bdr_s)+275, str, 40 * 2.0, text_color, "sans-bold");
+    ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+280, "km", 30 * 1.6, text_color, "sans-semibold");
   } else if (s->scene.liveMapData.opkrspeedlimit > 29){    
     const std::string cameradist_str = std::to_string((int)std::nearbyint(cameradist));
-    ui_draw_text(s, rect.centerX() - 15, int(bdr_s)+255, cameradist_str.c_str(), 40 * 2.0, text_color, "sans-bold");
-    ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+260, "m", 30 * 1.6, text_color, "sans-semibold");
+    ui_draw_text(s, rect.centerX() - 15, int(bdr_s)+275, cameradist_str.c_str(), 40 * 2.0, text_color, "sans-bold");
+    ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+280, "m", 30 * 1.6, text_color, "sans-semibold");
   } else {
     const std::string cameradist_str = std::to_string((int)std::nearbyint(cameradist));
-    ui_draw_text(s, rect.centerX() - 15, int(bdr_s)+255, cameradist_str.c_str(), 36 * 2.0, text_color, "sans-semibold");
-    ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+260, "m", 26 * 1.6, text_color, "sans-semibold");
+    ui_draw_text(s, rect.centerX() - 15, int(bdr_s)+275, cameradist_str.c_str(), 36 * 2.0, text_color, "sans-semibold");
+    ui_draw_text(s, rect.centerX() + 65, int(bdr_s)+280, "m", 26 * 1.6, text_color, "sans-semibold");
   } 
 }
 
