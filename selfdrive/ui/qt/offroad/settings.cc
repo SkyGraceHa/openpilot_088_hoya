@@ -641,6 +641,7 @@ TuningPanel::TuningPanel(QWidget* parent) : QWidget(parent) {
   layout->addWidget(new DynamicTR());
   layout->addWidget(new CruiseGapTR());
   layout->addWidget(new RadarLongHelperToggle());
+  layout->addWidget(new StoppingDistAdjToggle());
 }
 
 void SettingsWindow::showEvent(QShowEvent *event) {
