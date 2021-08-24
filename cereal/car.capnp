@@ -232,7 +232,7 @@ struct CarState {
   electGearStep @53 : Int8;
 
   vEgoOP @52 :Float32;  # openpilot speed
-  autoHold @53 : Int32;
+  autoHold @54 : Int32;
 
   struct WheelSpeeds {
     # optional wheel speeds
