@@ -587,9 +587,9 @@ class CarController():
           if aReqValue > 0.:
             stock_weight = interp(CS.out.radarDistance, [3., 25.], [0.8, 0.])
           elif 3.5 < CS.out.radarDistance and aReqValue < 0. and CS.out.vEgo * CV.MS_TO_KPH <= 1.5 and not CS.out.cruiseState.standstill and self.stopping_dist_adj_enabled:
-            stock_weight = 0
+            stock_weight = 0.1
           elif 0 < CS.out.radarDistance <= 3.5 and self.stopping_dist_adj_enabled:
-            stock_weight = interp(CS.out.radarDistance, [2.5, 3.5], [1., 0.])
+            stock_weight = interp(CS.out.radarDistance, [2.5, 3.5], [1., 0.1])
             apply_accel = apply_accel * (1. - stock_weight) + aReqValue * stock_weight
           elif aReqValue < 0.:
             stock_weight = interp(CS.out.radarDistance, [3., 25.], [1., 0.])
@@ -624,8 +624,8 @@ class CarController():
       self.scc11cnt = CS.scc11init["AliveCounterACC"]
 
     aq_value = CS.scc12["aReqValue"] if CS.CP.sccBus == 0 else apply_accel
-    str_log1 = 'M/C={:03.0f}/{:03.0f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  AQ={:+04.2f}  S={:.0f}/{:.0f}'.format(abs(self.model_speed), self.curve_speed,
-     abs(new_steer), max(self.steerMax, abs(new_steer)), self.steerDeltaUp, self.steerDeltaDown, aq_value, int(CS.is_highway), CS.safety_sign_check)
+    str_log1 = 'M/C={:03.0f}/{:03.0f}  TQ={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}  GS={:.0f}  AQ={:+04.2f}  S={:.0f}/{:.0f}'.format(abs(self.model_speed), self.curve_speed,
+     abs(new_steer), max(self.steerMax, abs(new_steer)), self.steerDeltaUp, self.steerDeltaDown, CS.out.electGearStep, aq_value, int(CS.is_highway), CS.safety_sign_check)
 
     self.cc_timer += 1
     if self.cc_timer > 100:
