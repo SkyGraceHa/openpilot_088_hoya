@@ -425,8 +425,8 @@ static void ui_draw_debug(UIState *s) {
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 
   if (scene.nDebugUi1) {
-    ui_draw_text(s, 30, 840-bdr_s, scene.alertTextMsg1.c_str(), 45, COLOR_WHITE_ALPHA(100), "sans-semibold");
-    ui_draw_text(s, 30, 880-bdr_s, scene.alertTextMsg2.c_str(), 45, COLOR_WHITE_ALPHA(100), "sans-semibold");
+    ui_draw_text(s, 30, 850-bdr_s, scene.alertTextMsg1.c_str(), 45, COLOR_WHITE_ALPHA(100), "sans-semibold");
+    ui_draw_text(s, 30, 890-bdr_s, scene.alertTextMsg2.c_str(), 45, COLOR_WHITE_ALPHA(100), "sans-semibold");
   }
   
   nvgFillColor(s->vg, COLOR_WHITE_ALPHA(150));
@@ -513,12 +513,12 @@ static void ui_draw_vision_scc_gap(UIState *s) {
   auto car_state = (*s->sm)["carState"].getCarState();
   int gap = car_state.getCruiseGapSet();
 
-  const int radius = 95;
-  const int center_x = radius + bdr_s - 10;
-  const int center_y = s->fb_h - 1.60 * footer_h + ((footer_h - radius) / 2);  
+  const int radius = 90;
+  const int center_x = radius + bdr_s - 5;
+  const int center_y = s->fb_h - 1.50 * footer_h + ((footer_h - radius) / 2);  
 
   float lead_car_dist_img_alpha = gap > 0 ? 0.6f : 0.3f;
-  float lead_car_dist_bg_alpha = gap > 0 ? 0.0f : 0.0f;
+  float lead_car_dist_bg_alpha = gap > 0 ? 0.1f : 0.0f;
   NVGcolor lead_car_dist_bg = nvgRGBA(0, 0, 0, (255 * lead_car_dist_bg_alpha));
   
   if(gap <= 0) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_0", lead_car_dist_bg, lead_car_dist_img_alpha);}
@@ -805,7 +805,7 @@ static void ui_draw_vision_event(UIState *s) {
   if (s->scene.gpsAccuracyUblox != 0.00 && !s->scene.comma_stock_ui) {
     const int radius = 85;
     const int compass_x = 1920 / 2;
-    const int compass_y = 1080 - 10;
+    const int compass_y = 1080 - 20;
     // const int compass_x = s->fb_w - 167 - bdr_s;
     // const int compass_y = bdr_s + 713;
     // const int direction_x = compass_x + 74;
