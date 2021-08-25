@@ -515,7 +515,7 @@ static void ui_draw_vision_scc_gap(UIState *s) {
 
   const int radius = 90;
   const int center_x = radius + bdr_s - 5;
-  const int center_y = s->fb_h - 1.50 * footer_h + ((footer_h - radius) / 2);  
+  const int center_y = s->fb_h - 1.60 * footer_h + ((footer_h - radius) / 2);  
 
   float lead_car_dist_img_alpha = gap > 0 ? 0.6f : 0.3f;
   float lead_car_dist_bg_alpha = gap > 0 ? 0.1f : 0.0f;
@@ -805,7 +805,7 @@ static void ui_draw_vision_event(UIState *s) {
   if (s->scene.gpsAccuracyUblox != 0.00 && !s->scene.comma_stock_ui) {
     const int radius = 85;
     const int compass_x = 1920 / 2;
-    const int compass_y = 1080 - 20;
+    const int compass_y = 1080 - 50;
     // const int compass_x = s->fb_w - 167 - bdr_s;
     // const int compass_y = bdr_s + 713;
     // const int direction_x = compass_x + 74;
