@@ -425,8 +425,8 @@ static void ui_draw_debug(UIState *s) {
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 
   if (scene.nDebugUi1) {
-    ui_draw_text(s, 30, 840-bdr_s, scene.alertTextMsg1.c_str(), 45, COLOR_WHITE_ALPHA(150), "sans-semibold");
-    ui_draw_text(s, 30, 880-bdr_s, scene.alertTextMsg2.c_str(), 45, COLOR_WHITE_ALPHA(150), "sans-semibold");
+    ui_draw_text(s, 30, 840-bdr_s, scene.alertTextMsg1.c_str(), 45, COLOR_WHITE_ALPHA(100), "sans-semibold");
+    ui_draw_text(s, 30, 880-bdr_s, scene.alertTextMsg2.c_str(), 45, COLOR_WHITE_ALPHA(100), "sans-semibold");
   }
   
   nvgFillColor(s->vg, COLOR_WHITE_ALPHA(150));
@@ -513,8 +513,8 @@ static void ui_draw_vision_scc_gap(UIState *s) {
   auto car_state = (*s->sm)["carState"].getCarState();
   int gap = car_state.getCruiseGapSet();
 
-  const int radius = 85;
-  const int center_x = radius + bdr_s;
+  const int radius = 95;
+  const int center_x = radius + bdr_s - 10;
   const int center_y = s->fb_h - 1.60 * footer_h + ((footer_h - radius) / 2);  
 
   float lead_car_dist_img_alpha = gap > 0 ? 0.6f : 0.3f;
