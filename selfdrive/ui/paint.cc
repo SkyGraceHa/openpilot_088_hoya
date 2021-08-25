@@ -1282,9 +1282,9 @@ static void ui_draw_vision_header(UIState *s) {
 static void ui_draw_vision_car(UIState *s) {
   UIScene &scene = s->scene;
   const int car_size = 350;
-  const int car_x_left = (s->fb_w/2 - 400);
-  const int car_x_right = (s->fb_w/2 + 400);
-  const int car_y = 500;
+  const int car_x_left = (s->fb_w/2 - 500);
+  const int car_x_right = (s->fb_w/2 + 500);
+  const int car_y = 600;
   const int car_img_size_w = (car_size * 1);
   const int car_img_size_h = (car_size * 1);
   const int car_img_x_left = (car_x_left - (car_img_size_w / 2));
