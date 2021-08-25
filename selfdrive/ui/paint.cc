@@ -804,8 +804,8 @@ static void ui_draw_vision_event(UIState *s) {
   //draw compass by opkr and re-designed by hoya
   if (s->scene.gpsAccuracyUblox != 0.00 && !s->scene.comma_stock_ui) {
     const int radius = 85;
-    const int compass_x = radius + bdr_s + (radius*2 + 30) * 4 + 20;
-    const int compass_y = s->fb_h - footer_h + ((footer_h - radius) / 2);
+    const int compass_x = 1920 / 2;
+    const int compass_y = 1080 - 10;
     // const int compass_x = s->fb_w - 167 - bdr_s;
     // const int compass_y = bdr_s + 713;
     // const int direction_x = compass_x + 74;
