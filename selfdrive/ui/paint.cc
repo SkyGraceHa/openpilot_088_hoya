@@ -428,7 +428,6 @@ static void ui_draw_debug(UIState *s) {
     ui_draw_text(s, 30, 840-bdr_s, scene.alertTextMsg1.c_str(), 45, COLOR_WHITE_ALPHA(150), "sans-semibold");
     ui_draw_text(s, 30, 880-bdr_s, scene.alertTextMsg2.c_str(), 45, COLOR_WHITE_ALPHA(150), "sans-semibold");
   }
-1080 - 85 - 85 - 30 
   
   nvgFillColor(s->vg, COLOR_WHITE_ALPHA(150));
   if (scene.nDebugUi2) {
