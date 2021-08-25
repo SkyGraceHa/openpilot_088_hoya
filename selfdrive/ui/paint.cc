@@ -425,8 +425,8 @@ static void ui_draw_debug(UIState *s) {
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 
   if (scene.nDebugUi1) {
-    ui_draw_text(s, 30, 1010-bdr_s, scene.alertTextMsg1.c_str(), 45, COLOR_WHITE_ALPHA(150), "sans-semibold");
-    ui_draw_text(s, 30, 1050-bdr_s, scene.alertTextMsg2.c_str(), 45, COLOR_WHITE_ALPHA(150), "sans-semibold");
+    ui_draw_text(s, 30, 870-bdr_s, scene.alertTextMsg1.c_str(), 45, COLOR_WHITE_ALPHA(150), "sans-semibold");
+    ui_draw_text(s, 30, 910-bdr_s, scene.alertTextMsg2.c_str(), 45, COLOR_WHITE_ALPHA(150), "sans-semibold");
   }
 
   
@@ -506,7 +506,7 @@ static void ui_draw_gear( UIState *s ) {
 static void ui_draw_vision_face(UIState *s) {
   const int radius = 85;
   const int center_x = radius + bdr_s;
-  const int center_y = s->fb_h - footer_h + ((footer_h - radius) / 2);
+  const int center_y = s->fb_h - footer_h;
   ui_draw_circle_image(s, center_x, center_y, radius, "driver_face", s->scene.dm_active);
 }
 
@@ -535,7 +535,7 @@ static void ui_draw_vision_brake(UIState *s) {
 
   const int radius = 85;
   const int center_x = radius + bdr_s + radius*2 + 30;
-  const int center_y = s->fb_h - footer_h + ((footer_h - radius) / 2);
+  const int center_y = s->fb_h - footer_h;
 
   bool brake_valid = scene->car_state.getBrakeLights();
   float brake_img_alpha = brake_valid ? 1.0f : 0.15f;
@@ -552,7 +552,7 @@ static void ui_draw_vision_autohold(UIState *s) {
 
   const int radius = 85;
   const int center_x = radius + bdr_s + (radius*2 + 30) * 2;
-  const int center_y = s->fb_h - footer_h + ((footer_h - radius) / 2);
+  const int center_y = s->fb_h - footer_h;
 
   float brake_img_alpha = autohold > 0 ? 1.0f : 0.15f;
   float brake_bg_alpha = autohold > 0 ? 0.3f : 0.1f;
@@ -1179,7 +1179,7 @@ static void draw_navi_button(UIState *s) {
     int btn_w = 140;
     int btn_h = 140;
     int btn_x1 = s->fb_w - btn_w - 355 - 40;
-    int btn_y = 1080 - btn_h - 35 - (btn_h / 2) - 10;
+    int btn_y = 1080 - btn_h;
     int btn_xc1 = btn_x1 + (btn_w/2);
     int btn_yc = btn_y + (btn_h/2);
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
@@ -1204,7 +1204,7 @@ static void draw_laneless_button(UIState *s) {
     int btn_w = 140;
     int btn_h = 140;
     int btn_x1 = s->fb_w - btn_w - 195 - 20;
-    int btn_y = 1080 - btn_h - 35 - (btn_h / 2) - 10;
+    int btn_y = 1080 - btn_h;
     int btn_xc1 = btn_x1 + (btn_w/2);
     int btn_yc = btn_y + (btn_h/2);
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
