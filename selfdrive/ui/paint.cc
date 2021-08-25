@@ -422,14 +422,14 @@ static void ui_draw_debug(UIState *s) {
   int ui_viz_ry = bdr_s;
   int ui_viz_rx_center = s->fb_w/2;
   
-  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+  nvgTextAlign(s->vg, NVG_ALIGN_MIDDLE | NVG_ALIGN_MIDDLE);
 
   if (scene.nDebugUi1) {
     ui_draw_text(s, 30, 850-bdr_s, scene.alertTextMsg1.c_str(), 45, COLOR_WHITE_ALPHA(100), "sans-semibold");
     ui_draw_text(s, 30, 890-bdr_s, scene.alertTextMsg2.c_str(), 45, COLOR_WHITE_ALPHA(100), "sans-semibold");
   }
   
-  nvgFillColor(s->vg, COLOR_WHITE_ALPHA(150));
+  nvgFillColor(s->vg, COLOR_WHITE_ALPHA(100));
   if (scene.nDebugUi2) {
     //if (scene.gpsAccuracyUblox != 0.00) {
     //  nvgFontSize(s->vg, 34);
@@ -445,7 +445,7 @@ static void ui_draw_debug(UIState *s) {
     ui_print(s, ui_viz_rx, ui_viz_ry+360, "AD:%.2f", scene.steer_actuator_delay);
     ui_print(s, ui_viz_rx, ui_viz_ry+400, "SC:%.2f", scene.lateralPlan.steerRateCost);
     ui_print(s, ui_viz_rx, ui_viz_ry+440, "OS:%.2f", abs(scene.output_scale));
-    ui_print(s, ui_viz_rx, ui_viz_ry+480, "%.2f|%.2f", scene.lateralPlan.lProb, scene.lateralPlan.rProb);
+    ui_print(s, ui_viz_rx, ui_viz_ry+480, "%.2f | %.2f", scene.lateralPlan.lProb, scene.lateralPlan.rProb);
     //ui_print(s, ui_viz_rx, ui_viz_ry+800, "A:%.5f", scene.accel_sensor2);
     if (scene.map_is_running) {
       if (scene.liveMapData.opkrspeedsign) ui_print(s, ui_viz_rx, ui_viz_ry+520, "SS:%.0f", scene.liveMapData.opkrspeedsign);
@@ -1277,13 +1277,13 @@ static void ui_draw_vision_header(UIState *s) {
   }
 }
 
-//blind spot warning by OPKR
+//BSM(blind spot monitoring) by OPKR
 static void ui_draw_vision_car(UIState *s) {
   UIScene &scene = s->scene;
   const int car_size = 350;
-  const int car_x_left = (s->fb_w/2 - 500);
-  const int car_x_right = (s->fb_w/2 + 500);
-  const int car_y = 600;
+  const int car_x_left = (s->fb_w/2 - 450);
+  const int car_x_right = (s->fb_w/2 + 450);
+  const int car_y = 550;
   const int car_img_size_w = (car_size * 1);
   const int car_img_size_h = (car_size * 1);
   const int car_img_x_left = (car_x_left - (car_img_size_w / 2));
@@ -1312,7 +1312,7 @@ static void ui_draw_vision_car(UIState *s) {
       scene.blindspot_blinkingrate -= 6;
       if(scene.blindspot_blinkingrate<0) scene.blindspot_blinkingrate = 120;
       if (scene.blindspot_blinkingrate>=60) {
-        car_img_alpha = 0.6f;
+        car_img_alpha = 0.7f;
       } else {
         car_img_alpha = 0.0f;
       }
