@@ -117,15 +117,16 @@ static void draw_lead(UIState *s, const cereal::ModelDataV2::LeadDataV3::Reader 
   x = std::clamp(x, 0.f, s->fb_w - sz / 2);
   y = std::fmin(s->fb_h - sz * .6, y);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-  int x_l = x;
-  int y_l = y;
+
   int sz_w = sz * 2;
-  int sz_h = sz * 0.13;
+  int sz_h = sz * 0.5;
+  int x_l = x - sz_w;
+  int y_l = y;
 
   if (s->scene.radarDistance < 149) {                                         //radar가 인식되면
     draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_ORANGE); //orange ==> red
     ui_draw_text(s, x, y + sz/1.5f, "R", 20 * 2.5, COLOR_WHITE, "sans-bold");
-    ui_draw_image(s, {x_l, y_l, sz_w, sz_h}, "lead_under_radar", 1.0f);  
+    ui_draw_image(s, {x_l, y_l, sz_w * 2, sz_h}, "lead_under_radar", 1.0f);  
   } else {                                                                                 //camera가 인식되면
     draw_chevron(s, x, y, sz, nvgRGBA(150, 0, 200, fillAlpha), nvgRGBA(0, 150, 200, 200)); //oceanblue ==> purple
     ui_draw_text(s, x, y + sz/1.5f, "C", 20 * 2.5, COLOR_WHITE, "sans-bold");
