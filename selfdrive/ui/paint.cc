@@ -44,27 +44,27 @@ static void ui_draw_text(const UIState *s, float x, float y, const char *string,
   nvgText(s->vg, x, y, string, NULL);
 }
 
-static void draw_chevron(UIState *s, float x, float y, float sz, NVGcolor fillColor, NVGcolor glowColor) {
-  // glow
-  float g_xo = sz/5;
-  float g_yo = sz/10;
-  nvgBeginPath(s->vg);
-  nvgMoveTo(s->vg, x+(sz*1.35)+g_xo, y+sz+g_yo);
-  nvgLineTo(s->vg, x, y-g_xo);
-  nvgLineTo(s->vg, x-(sz*1.35)-g_xo, y+sz+g_yo);
-  nvgClosePath(s->vg);
-  nvgFillColor(s->vg, glowColor);
-  nvgFill(s->vg);
+// static void draw_chevron(UIState *s, float x, float y, float sz, NVGcolor fillColor, NVGcolor glowColor) {
+//   // glow
+//   float g_xo = sz/5;
+//   float g_yo = sz/10;
+//   nvgBeginPath(s->vg);
+//   nvgMoveTo(s->vg, x+(sz*1.35)+g_xo, y+sz+g_yo);
+//   nvgLineTo(s->vg, x, y-g_xo);
+//   nvgLineTo(s->vg, x-(sz*1.35)-g_xo, y+sz+g_yo);
+//   nvgClosePath(s->vg);
+//   nvgFillColor(s->vg, glowColor);
+//   nvgFill(s->vg);
 
-  // chevron
-  nvgBeginPath(s->vg);
-  nvgMoveTo(s->vg, x+(sz*1.25), y+sz);
-  nvgLineTo(s->vg, x, y);
-  nvgLineTo(s->vg, x-(sz*1.25), y+sz);
-  nvgClosePath(s->vg);
-  nvgFillColor(s->vg, fillColor);
-  nvgFill(s->vg);
-}
+//   // chevron
+//   nvgBeginPath(s->vg);
+//   nvgMoveTo(s->vg, x+(sz*1.25), y+sz);
+//   nvgLineTo(s->vg, x, y);
+//   nvgLineTo(s->vg, x-(sz*1.25), y+sz);
+//   nvgClosePath(s->vg);
+//   nvgFillColor(s->vg, fillColor);
+//   nvgFill(s->vg);
+// }
 
 //atom(conan)'s steering wheel
 static void ui_draw_circle_image_rotation(const UIState *s, int center_x, int center_y, int radius, const char *image, NVGcolor color, float img_alpha, float angleSteers = 0) {
