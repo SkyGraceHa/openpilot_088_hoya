@@ -119,8 +119,8 @@ static void draw_lead(UIState *s, const cereal::ModelDataV2::LeadDataV3::Reader 
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
   int x_l = x;
   int y_l = y;
-  sz_w = sz * 2;
-  sz_h = sz * 0.13;
+  int sz_w = sz * 2;
+  int sz_h = sz * 0.13;
 
   if (s->scene.radarDistance < 149) {                                         //radar가 인식되면
     draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_ORANGE); //orange ==> red
