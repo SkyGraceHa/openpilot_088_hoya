@@ -114,20 +114,22 @@ static void draw_lead(UIState *s, const cereal::ModelDataV2::LeadDataV3::Reader 
   }
 
   float sz = std::clamp((25 * 30) / (d_rel / 3 + 30), 15.0f, 30.0f) * 2.35;
-  const int size_line_w = sz;
-  const int size_line_h = sz + 0.13;
-  const int x = std::clamp(x, 0.f, s->fb_w - sz / 2);
-  const int y = std::fmin(s->fb_h - sz * .6, y);
+  x = std::clamp(x, 0.f, s->fb_w - sz / 2);
+  y = std::fmin(s->fb_h - sz * .6, y);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+  int x_l = x;
+  int y_l = y;
+  sz_w = sz * 2;
+  sz_h = sz * 0.13;
 
   if (s->scene.radarDistance < 149) {                                         //radar가 인식되면
-    // draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_ORANGE); //orange ==> red
-    // ui_draw_text(s, x, y + sz/1.5f, "R", 20 * 2.5, COLOR_WHITE, "sans-bold");
-    ui_draw_image(s, {x, y, size_line_w, size_line_h}, "lead_under_radar", 1.0f);  
+    draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_ORANGE); //orange ==> red
+    ui_draw_text(s, x, y + sz/1.5f, "R", 20 * 2.5, COLOR_WHITE, "sans-bold");
+    ui_draw_image(s, {x_l, y_l, sz_w, sz_h}, "lead_under_radar", 1.0f);  
   } else {                                                                                 //camera가 인식되면
-    // draw_chevron(s, x, y, sz, nvgRGBA(150, 0, 200, fillAlpha), nvgRGBA(0, 150, 200, 200)); //oceanblue ==> purple
-    // ui_draw_text(s, x, y + sz/1.5f, "C", 20 * 2.5, COLOR_WHITE, "sans-bold");
-    ui_draw_image(s, {x, y, size_line_w, size_line_h}, "lead_under_camera", 1.0f);  
+    draw_chevron(s, x, y, sz, nvgRGBA(150, 0, 200, fillAlpha), nvgRGBA(0, 150, 200, 200)); //oceanblue ==> purple
+    ui_draw_text(s, x, y + sz/1.5f, "C", 20 * 2.5, COLOR_WHITE, "sans-bold");
+    ui_draw_image(s, {x_l, y_l, sz_w, sz_h}, "lead_under_camera", 1.0f);  
   }
 }
 
