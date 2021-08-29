@@ -119,11 +119,13 @@ static void draw_lead(UIState *s, const cereal::ModelDataV2::LeadDataV3::Reader 
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
 
   if (s->scene.radarDistance < 149) {                                         //radar가 인식되면
-    draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_ORANGE); //orange ==> red
-    ui_draw_text(s, x, y + sz/1.5f, "R", 20 * 2.5, COLOR_WHITE, "sans-bold"); 
+    // draw_chevron(s, x, y, sz, nvgRGBA(201, 34, 49, fillAlpha), COLOR_ORANGE); //orange ==> red
+    // ui_draw_text(s, x, y + sz/1.5f, "R", 20 * 2.5, COLOR_WHITE, "sans-bold");
+    ui_draw_image(s, {x, y, sz, sz*0.13}, "lead_under_radar", 1.0f);  
   } else {                                                                                 //camera가 인식되면
-    draw_chevron(s, x, y, sz, nvgRGBA(150, 0, 200, fillAlpha), nvgRGBA(0, 150, 200, 200)); //oceanblue ==> purple
-    ui_draw_text(s, x, y + sz/1.5f, "C", 20 * 2.5, COLOR_WHITE, "sans-bold"); 
+    // draw_chevron(s, x, y, sz, nvgRGBA(150, 0, 200, fillAlpha), nvgRGBA(0, 150, 200, 200)); //oceanblue ==> purple
+    // ui_draw_text(s, x, y + sz/1.5f, "C", 20 * 2.5, COLOR_WHITE, "sans-bold");
+    ui_draw_image(s, {x, y, sz, sz*0.13}, "lead_under_camera", 1.0f);  
   }
 }
 
@@ -1688,7 +1690,9 @@ void ui_nvg_init(UIState *s) {
     {"lead_car_dist_3", "../assets/car_dist_3.png"},
     {"lead_car_dist_4", "../assets/car_dist_4.png"},
     {"custom_lead_vision", "../assets/custom_lead_vision.png"},
-    {"custom_lead_radar", "../assets/custom_lead_radar.png"},    
+    {"custom_lead_radar", "../assets/custom_lead_radar.png"},
+    {"lead_under_radar", "../assets/lead_underline_radar.png"},
+    {"lead_under_camera", "../assets/lead_underline_camera.png"},
   };
   for (auto [name, file] : images) {
     s->images[name] = nvgCreateImage(s->vg, file, 1);
