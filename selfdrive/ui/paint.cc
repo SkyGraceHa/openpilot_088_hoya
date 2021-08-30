@@ -523,7 +523,7 @@ static void ui_draw_vision_scc_gap(UIState *s) {
   const int w = 180;
   const int h = 180;
   const int x = 17;
-  const int y = 675;  
+  const int y = 660;  
   
   if(gap <= 0) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_0", 0.3f);}
   else if (gap == 1) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_1", 0.8f);}
