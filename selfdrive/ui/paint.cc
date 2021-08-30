@@ -520,20 +520,17 @@ static void ui_draw_vision_scc_gap(UIState *s) {
   auto car_state = (*s->sm)["carState"].getCarState();
   int gap = car_state.getCruiseGapSet();
 
-  const int radius = 90;
-  const int center_x = radius + bdr_s - 5;
-  const int center_y = s->fb_h - 1.60 * footer_h + ((footer_h - radius) / 2);  
-
-  float lead_car_dist_img_alpha = gap > 0 ? 0.6f : 0.3f;
-  float lead_car_dist_bg_alpha = gap > 0 ? 0.1f : 0.0f;
-  NVGcolor lead_car_dist_bg = nvgRGBA(0, 0, 0, (255 * lead_car_dist_bg_alpha));
+  const int w = 180;
+  const int h = 180;
+  const int x = 20;
+  const int y = 700;  
   
-  if(gap <= 0) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_0", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 1) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_1", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 2) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_2", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 3) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_3", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 4) {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_4", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else {ui_draw_circle_image_rotation(s, center_x, center_y, radius+15, "lead_car_dist_0", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  if(gap <= 0) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_0", 0.3f); 
+  else if (gap == 1) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_1", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  else if (gap == 2) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_2", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  else if (gap == 3) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_3", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  else if (gap == 4) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_4", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  else {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_0", lead_car_dist_bg, lead_car_dist_img_alpha);}
 }
 
 static void ui_draw_vision_brake(UIState *s) {
