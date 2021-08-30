@@ -525,12 +525,12 @@ static void ui_draw_vision_scc_gap(UIState *s) {
   const int x = 20;
   const int y = 700;  
   
-  if(gap <= 0) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_0", 0.3f); 
-  else if (gap == 1) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_1", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 2) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_2", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 3) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_3", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else if (gap == 4) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_4", lead_car_dist_bg, lead_car_dist_img_alpha);}
-  else {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_0", lead_car_dist_bg, lead_car_dist_img_alpha);}
+  if(gap <= 0) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_0", 0.3f);}
+  else if (gap == 1) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_1", 0.8f);}
+  else if (gap == 2) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_2", 0.8f);}
+  else if (gap == 3) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_3", 0.8f);}
+  else if (gap == 4) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_4", 0.8f);}
+  else {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_0", 0.8f);}
 }
 
 static void ui_draw_vision_brake(UIState *s) {
