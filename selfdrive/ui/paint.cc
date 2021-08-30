@@ -522,8 +522,8 @@ static void ui_draw_vision_scc_gap(UIState *s) {
 
   const int w = 180;
   const int h = 180;
-  const int x = 20;
-  const int y = 700;  
+  const int x = 17;
+  const int y = 675;  
   
   if(gap <= 0) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_0", 0.3f);}
   else if (gap == 1) {ui_draw_image(s, {x, y, w, h}, "lead_car_dist_1", 0.8f);}
@@ -808,7 +808,7 @@ static void ui_draw_vision_event(UIState *s) {
   //draw compass by opkr and re-designed by hoya
   if (s->scene.gpsAccuracyUblox != 0.00 && !s->scene.comma_stock_ui) {
     const int radius = 85;
-    const int compass_x = 1920 / 2;
+    const int compass_x = 1920 / 2 - 50;
     const int compass_y = 1080 - 50;
     // const int compass_x = s->fb_w - 167 - bdr_s;
     // const int compass_y = bdr_s + 713;
