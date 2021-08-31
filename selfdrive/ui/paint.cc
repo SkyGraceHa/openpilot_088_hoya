@@ -113,7 +113,7 @@ static void draw_lead(UIState *s, const cereal::ModelDataV2::LeadDataV3::Reader 
     fillAlpha = (int)(fmin(fillAlpha, 255));
   }
 
-  float sz = std::clamp((30 * 30) / (d_rel / 3 + 20), 10.0f, 45.0f) * 2.35;
+  float sz = std::clamp((30 * 30) / (d_rel / 2 + 20), 10.0f, 45.0f) * 2.35;
   //float sz = std::clamp((25 * 30) / (d_rel / 3 + 30), 15.0f, 30.0f) * 2.35;
   x = std::clamp(x, 0.f, s->fb_w - sz / 2);
   y = std::fmin(s->fb_h - sz * .6, y);
