@@ -318,7 +318,7 @@ static void ui_draw_world(UIState *s) {
     }
   }
   else {
-    if (lead_one.getProb() > .5) {
+    if ((lead_one.getProb() > .5) || (lead_radar.getStatus() && lead_radar.getRadar())) {
       draw_lead(s, lead_one, scene.lead_vertices[0]);
     }
     if (lead_two.getProb() > .5 && (std::abs(lead_one.getX()[0] - lead_two.getX()[0]) > 3.0)) {
