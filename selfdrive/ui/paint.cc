@@ -118,8 +118,8 @@ static void draw_lead(UIState *s, const cereal::ModelDataV2::LeadDataV3::Reader 
   y = std::fmin(s->fb_h - sz * .6, y);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
 
-  int sz_w = sz * 2;
-  int sz_h = sz * 0.5;
+  int sz_w = sz * 3;
+  int sz_h = sz * 1;
   int x_l = x - sz_w;
   int y_l = y ;
 
