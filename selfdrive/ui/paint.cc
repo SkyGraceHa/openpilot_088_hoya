@@ -1039,7 +1039,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
         val_color = COLOR_RED_ALPHA(200);
       }
       // lead car relative distance is always in meters
-      if((float)(lead_one.getX()[0]) < 10) {
+      if((float)(lead_one.getDRel()) < 10) {
         snprintf(val_str, sizeof(val_str), "%.1f", (float)lead_one.getDRel());
       } else {
         snprintf(val_str, sizeof(val_str), "%d", (int)lead_one.getDRel());
