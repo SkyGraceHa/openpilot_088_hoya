@@ -262,10 +262,10 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
 
   EventName.modelLongAlert: {
     ET.PERMANENT: Alert(
-      "MODEL LONG 활성화 됨",
+      "E2E 모델 LONG 활성화 됨",
       "예기치 않게 작동할 수 있으니 주의하세요.",
       AlertStatus.normal, AlertSize.mid,
-      Priority.LOW, VisualAlert.none, AudibleAlert.chimeWarning1, .4, 0., 2.),
+      Priority.LOW, VisualAlert.none, AudibleAlert.chimeWarning1, .4, 0., 3.),
   },
 
   EventName.joystickDebug: {
@@ -698,6 +698,22 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
   EventName.isgActive: {
     ET.WARNING: Alert(
       "조향제어 일시정지, ISG 작동 중",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, .0, .1, .1, alert_rate=0.75),
+  },
+
+  EventName.camSpeedDown: {
+    ET.WARNING: Alert(
+      "안전구간 감속 제어 중",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, .5, .5, .5, alert_rate=0.75),
+  },
+
+  EventName.gapAdjusting: {
+    ET.WARNING: Alert(
+      "크루즈 갭 조정 중",
       "",
       AlertStatus.normal, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .0, .1, .1, alert_rate=0.75),

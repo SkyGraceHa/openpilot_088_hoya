@@ -141,7 +141,9 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     needBrake @114;
     standStill @115;
     modelLongAlert @116;
-	isgActive @117;
+    isgActive @117;
+    camSpeedDown @118;
+    gapAdjusting @119;
   }
 }
 
@@ -227,9 +229,11 @@ struct CarState {
   # opkr
   safetyDist @50 :Float32;
   safetySign @51 :Float32;
+  electGearStep @53 :Int8;
+  isMph @54 :Bool;
 
   vEgoOP @52 :Float32;  # openpilot speed
-  autoHold @53 : Int32;
+  autoHold @55 : Int32;
 
   struct WheelSpeeds {
     # optional wheel speeds

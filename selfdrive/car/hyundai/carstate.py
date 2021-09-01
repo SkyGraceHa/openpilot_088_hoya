@@ -55,6 +55,7 @@ class CarState(CarStateBase):
     self.safety_block_remain_dist = 0
     self.is_highway = False
     self.on_speed_control = False
+    self.safetycam_decel_dist_gain = int(Params().get("SafetyCamDecelDistGain", encoding="utf8"))
 
   def update(self, cp, cp2, cp_cam):
     cp_mdps = cp2 if self.CP.mdpsBus == 1 else cp
@@ -81,7 +82,7 @@ class CarState(CarStateBase):
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
     ret.vEgoOP = ret.vEgo
 
-    ret.vEgo = cp.vl["CLU11"]["CF_Clu_Vanz"] * CV.KPH_TO_MS
+    ret.vEgo = cp.vl["CLU11"]["CF_Clu_Vanz"] * CV.MPH_TO_MS if bool(cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"]) else cp.vl["CLU11"]["CF_Clu_Vanz"] * CV.KPH_TO_MS
 
     ret.standstill = ret.vEgoRaw < 0.1
     ret.standStill = self.CP.standStill
@@ -125,6 +126,7 @@ class CarState(CarStateBase):
     ret.cruiseState.standstill = cp_scc.vl["SCC11"]["SCCInfoDisplay"] == 4. if not self.no_radar else False
     self.cruiseState_standstill = ret.cruiseState.standstill
     self.is_set_speed_in_mph = bool(cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"])
+    ret.isMph = self.is_set_speed_in_mph
     
     self.acc_active = ret.cruiseState.enabled
     if self.acc_active:
@@ -193,40 +195,42 @@ class CarState(CarStateBase):
     self.safety_sign_check = cp.vl["NAVI"]["OPKR_S_Sign"]
     self.safety_block_remain_dist = cp.vl["NAVI"]["OPKR_SBR_Dist"]
     self.is_highway = cp_scc.vl["SCC11"]["Navi_SCC_Camera_Act"] != 0.
-    if self.safety_sign_check in [25.] and not self.is_highway:
+    if self.safety_sign_check in [24., 25., 26.] and not self.is_highway and 29 < ret.cruiseState.speed*CV.MS_TO_KPH < 69:
       self.safety_sign = 30.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [1.] and not self.is_highway:
+    elif self.safety_sign_check in [0., 1., 2.] and 29 < ret.cruiseState.speed*CV.MS_TO_KPH < 79:
       self.safety_sign = 40.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [8., 9., 10.] and not self.is_highway:
+    elif self.safety_sign_check in [8., 9., 10.] and 29 < ret.cruiseState.speed*CV.MS_TO_KPH < 89:
       self.safety_sign = 50.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [16., 17., 18.] and not self.is_highway:
+    elif self.safety_sign_check in [16., 17., 18.] and not self.is_highway and 29 < ret.cruiseState.speed*CV.MS_TO_KPH:
       self.safety_sign = 60.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [24.] and not self.is_highway:
+    elif self.safety_sign_check in [24., 25., 26.] and not self.is_highway and 29 < ret.cruiseState.speed*CV.MS_TO_KPH:
       self.safety_sign = 70.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [0., 1., 2.]:
+    elif self.safety_sign_check in [0., 1., 2.] and 29 < ret.cruiseState.speed*CV.MS_TO_KPH:
       self.safety_sign = 80.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [8., 10.]:
+    elif self.safety_sign_check in [8., 9., 10.] and 29 < ret.cruiseState.speed*CV.MS_TO_KPH:
       self.safety_sign = 90.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [16., 17., 18.] and self.is_highway:
+    elif self.safety_sign_check in [16., 17., 18.] and self.is_highway and 29 < ret.cruiseState.speed*CV.MS_TO_KPH:
       self.safety_sign = 100.
       self.safety_sign_last = self.safety_sign
-    elif self.safety_sign_check in [24., 25., 26.] and self.is_highway:
+    elif self.safety_sign_check in [24., 25., 26.] and self.is_highway and 29 < ret.cruiseState.speed*CV.MS_TO_KPH:
       self.safety_sign = 110.
       self.safety_sign_last = self.safety_sign
     elif self.safety_block_remain_dist < 255.:
       self.safety_sign = self.safety_sign_last
     else:
       self.safety_sign = 0.
-    cam_distance_calc = interp(ret.vEgo*CV.MS_TO_KPH, [30,60,100,160], [3.6,5.35,5.8,6.8])
-    consider_speed = interp((ret.vEgo*CV.MS_TO_KPH - self.safety_sign), [10, 30], [1, 1.25])
-    if self.safety_sign > 29 and self.safety_dist < cam_distance_calc*consider_speed*ret.vEgo*CV.MS_TO_KPH:
+
+    cam_distance_calc = interp(ret.vEgo*CV.MS_TO_KPH, [30,110], [2.8,4.0])  # 감속 기본 거리(속도*값 = 거리)
+    consider_speed = interp((ret.vEgo*CV.MS_TO_KPH - self.safety_sign), [0,50], [1, 2.25]) # 속도차에 따른 거리에 추가로 곱함
+    final_cam_decel_start_dist = cam_distance_calc*consider_speed*ret.vEgo*CV.MS_TO_KPH * (1 + self.safetycam_decel_dist_gain*0.01) # 최종 감속 시작 거리*사용자 거리 팩터 추가
+    if self.safety_sign > 29 and self.safety_dist < final_cam_decel_start_dist:
       ret.safetySign = self.safety_sign
       ret.safetyDist = self.safety_dist
       self.on_speed_control = True
@@ -255,8 +259,10 @@ class CarState(CarStateBase):
       gear = cp.vl["TCU12"]["CUR_GR"]
     elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
+      ret.electGearStep = cp.vl["ELECT_GEAR"]["Elect_Gear_Step"] # opkr
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
+      ret.electGearStep = 0
 
     if self.gear_correction:
       ret.gearShifter = GearShifter.drive
@@ -514,7 +520,10 @@ class CarState(CarStateBase):
         ("TCU12", 100)
       ]
     elif CP.carFingerprint in FEATURES["use_elect_gears"]:
-      signals += [("Elect_Gear_Shifter", "ELECT_GEAR", 0)]
+      signals += [
+        ("Elect_Gear_Shifter", "ELECT_GEAR", 0),
+        ("Elect_Gear_Step", "ELECT_GEAR", 0)
+      ]
       checks += [("ELECT_GEAR", 20)]
     else:
       signals += [

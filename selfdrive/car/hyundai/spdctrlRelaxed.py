@@ -9,8 +9,6 @@ from selfdrive.car.hyundai.spdcontroller  import SpdController
 
 import common.log as trace1
 
-from selfdrive.controls.lib.events import Events
-
 LaneChangeState = log.LateralPlan.LaneChangeState
 
 
