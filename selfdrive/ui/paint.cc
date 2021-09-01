@@ -1027,20 +1027,22 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
     char val_str[16];
     char uom_str[16];
     NVGcolor val_color = COLOR_WHITE_ALPHA(200);
-    if (lead_one.getProb() > .5) {
+    auto radar_state = (*s->sm)["radarState"].getRadarState();
+    auto lead_one = radar_state.getLeadOne();    
+    if (lead_one.getStatus()) {
       //show RED if less than 5 meters
       //show orange if less than 15 meters
-      if((int)(lead_one.getX()[0]) < 15) {
+      if((int)(lead_one.getDRel()) < 15) {
         val_color = COLOR_ORANGE_ALPHA(200);
       }
-      if((int)(lead_one.getX()[0]) < 5) {
+      if((int)(lead_one.getDRel()) < 5) {
         val_color = COLOR_RED_ALPHA(200);
       }
       // lead car relative distance is always in meters
       if((float)(lead_one.getX()[0]) < 10) {
-        snprintf(val_str, sizeof(val_str), "%.1f", (float)lead_one.getX()[0]);
+        snprintf(val_str, sizeof(val_str), "%.1f", (float)lead_one.getDRel());
       } else {
-        snprintf(val_str, sizeof(val_str), "%d", (int)lead_one.getX()[0]);
+        snprintf(val_str, sizeof(val_str), "%d", (int)lead_one.getDRel());
       }
 
     } else {
@@ -1055,23 +1057,25 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
   }
   //add visual radar relative speed
   if (true) {
+    auto radar_state = (*s->sm)["radarState"].getRadarState();
+    auto lead_one = radar_state.getLeadOne();    
     char val_str[32];
     char uom_str[16];
     NVGcolor val_color = COLOR_WHITE_ALPHA(200);
-    if (lead_one.getProb() > .5) {
+    if (lead_one.getStatus()) {
       //show Orange if negative speed (approaching)
       //show Orange if negative speed faster than 5mph (approaching fast)
-      if((int)((lead_one.getV()[0] - scene.car_state.getVEgoOP()) * 3.6) < 0) {
+      if((int)(lead_one.getVRel()) < 0) {
         val_color = nvgRGBA(255, 188, 3, 200);
       }
-      if((int)((lead_one.getV()[0] - scene.car_state.getVEgoOP()) * 3.6) < -5) {
+      if((int)(lead_one.getVRel()) < -5) {
         val_color = nvgRGBA(255, 0, 0, 200);
       }
       // lead car relative speed is always in meters
-      if (scene.is_metric) {
-         snprintf(val_str, sizeof(val_str), "%d", (int)((lead_one.getV()[0] - scene.car_state.getVEgoOP()) * 3.6));
+      if (s->scene.is_metric) {
+         snprintf(val_str, sizeof(val_str), "%d", (int)(lead_one.getVRel() * 3.6 + 0.5));
       } else {
-         snprintf(val_str, sizeof(val_str), "%d", (int)((lead_one.getV()[0] - scene.car_state.getVEgoOP()) * 2.2374144));
+         snprintf(val_str, sizeof(val_str), "%d", (int)(lead_one.getVRel() * 2.2374144 + 0.5));
       }
     } else {
        snprintf(val_str, sizeof(val_str), "-");
