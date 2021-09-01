@@ -82,7 +82,7 @@ class CarState(CarStateBase):
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
     ret.vEgoOP = ret.vEgo
 
-    ret.vEgo = cp.vl["CLU11"]["CF_Clu_Vanz"] * CV.KPH_TO_MS
+    ret.vEgo = cp.vl["CLU11"]["CF_Clu_Vanz"] * CV.MPH_TO_MS if bool(cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"]) else cp.vl["CLU11"]["CF_Clu_Vanz"] * CV.KPH_TO_MS
 
     ret.standstill = ret.vEgoRaw < 0.1
     ret.standStill = self.CP.standStill
@@ -126,6 +126,7 @@ class CarState(CarStateBase):
     ret.cruiseState.standstill = cp_scc.vl["SCC11"]["SCCInfoDisplay"] == 4. if not self.no_radar else False
     self.cruiseState_standstill = ret.cruiseState.standstill
     self.is_set_speed_in_mph = bool(cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"])
+    ret.isMph = self.is_set_speed_in_mph
     
     self.acc_active = ret.cruiseState.enabled
     if self.acc_active:

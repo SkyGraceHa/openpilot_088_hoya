@@ -229,10 +229,11 @@ struct CarState {
   # opkr
   safetyDist @50 :Float32;
   safetySign @51 :Float32;
-  electGearStep @53 : Int8;
+  electGearStep @53 :Int8;
+  isMph @54 :Bool;
 
   vEgoOP @52 :Float32;  # openpilot speed
-  autoHold @54 : Int32;
+  autoHold @55 : Int32;
 
   struct WheelSpeeds {
     # optional wheel speeds
